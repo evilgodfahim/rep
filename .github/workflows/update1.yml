@@ -39,6 +39,7 @@ jobs:
           fi
 
       - name: Run RSS processor
+        id: processor
         shell: bash
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -48,6 +49,7 @@ jobs:
           python main1.py
 
       - name: Commit processed files
+        if: steps.processor.outputs.has_signal == 'true'
         shell: bash
         run: |
           set -euo pipefail
