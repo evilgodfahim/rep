@@ -47,6 +47,12 @@ except Exception:
 # -- FEEDS ---------------------------------------------------------------------
 
 FEED_URLS = [
+
+
+
+"https://evilgodfahim.github.io/yn/feeds/feed.xml"
+
+
     # 1. World's Leading Organizations
     "https://news.google.com/rss/search?q=%22United+Nations%22+OR+NATO+OR+IMF+OR+%22World+Bank%22+OR+G20+OR+G7+OR+WTO+OR+OPEC+OR+WHO&hl=en-US&gl=US&ceid=US:en",
 
