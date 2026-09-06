@@ -22,6 +22,8 @@ Changes from previous version:
 - Switched classifier from Mistral to Gemini 2.5 Flash; prompt rewritten for
   higher recall (defaults to inclusion on ambiguity).
 - Switched from deprecated google.generativeai to google.genai (google-genai).
+- _set_gha_output(): writes has_signal=true/false to $GITHUB_OUTPUT so the
+  Actions workflow can skip the commit/push step when AI selects 0 articles.
 """
 
 import feedparser
@@ -47,12 +49,6 @@ except Exception:
 # -- FEEDS ---------------------------------------------------------------------
 
 FEED_URLS = [
-
-
-
-"https://evilgodfahim.github.io/yn/feeds/feed.xml"
-
-
     # 1. World's Leading Organizations
     "https://news.google.com/rss/search?q=%22United+Nations%22+OR+NATO+OR+IMF+OR+%22World+Bank%22+OR+G20+OR+G7+OR+WTO+OR+OPEC+OR+WHO&hl=en-US&gl=US&ceid=US:en",
 
@@ -172,6 +168,19 @@ STATS = {
     "total_signal":        0,
     "timestamp":            None,
 }
+
+# -- GITHUB ACTIONS OUTPUT -----------------------------------------------------
+
+def _set_gha_output(name: str, value: str) -> None:
+    """
+    Write name=value to $GITHUB_OUTPUT when running inside GitHub Actions.
+    No-op in local environments where the variable is absent.
+    """
+    output_file = os.environ.get("GITHUB_OUTPUT")
+    if not output_file:
+        return
+    with open(output_file, "a", encoding="utf-8") as fh:
+        fh.write(f"{name}={value}\n")
 
 # -- GOOGLE NEWS URL DECODING --------------------------------------------------
 
@@ -766,6 +775,7 @@ def main():
 
     if not gemini_indices:
         print("Gemini returned no signal indices. Skipping XML writes.")
+        _set_gha_output("has_signal", "false")
         print_stats()
         return
 
@@ -791,6 +801,8 @@ def main():
     )
 
     save_selected_articles(signal_articles)
+
+    _set_gha_output("has_signal", "true")
 
     STATS["timestamp"] = datetime.utcnow().isoformat()
     save_stats()
