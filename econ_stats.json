@@ -1,105 +1,80 @@
 {
   "per_feed": {
-    "https://evilgodfahim.github.io/mr/curated_feedb.xml": {
-      "fetched": 500,
-      "passed_age": 20,
-      "capped": 20
-    },
-    "https://evilgodfahim.github.io/mr/curated_feed.xml": {
-      "fetched": 500,
-      "passed_age": 74,
-      "capped": 74
-    },
-    "https://evilgodfahim.github.io/mr/curated_feed_edit.xml": {
-      "fetched": 500,
-      "passed_age": 34,
-      "capped": 34
-    },
-    "https://evilgodfahim.github.io/mr/curated_feed_bdit.xml": {
-      "fetched": 500,
-      "passed_age": 27,
-      "capped": 27
-    },
-    "https://evilgodfahim.github.io/bdcd/curated_feed.xml": {
-      "fetched": 500,
-      "passed_age": 99,
-      "capped": 99
-    },
-    "https://evilgodfahim.github.io/bdcdb/curated_feed.xml": {
-      "fetched": 500,
-      "passed_age": 253,
-      "capped": 253
-    },
-    "https://evilgodfahim.github.io/bdl/final.xml": {
-      "fetched": 47,
-      "passed_age": 12,
-      "capped": 12
-    },
-    "https://evilgodfahim.github.io/bdlb/final.xml": {
-      "fetched": 42,
+    "https://evilgodfahim.github.io/yn/feeds/feed.xmlhttps://news.google.com/rss/search?q=%22United+Nations%22+OR+NATO+OR+IMF+OR+%22World+Bank%22+OR+G20+OR+G7+OR+WTO+OR+OPEC+OR+WHO&hl=en-US&gl=US&ceid=US:en": {
+      "fetched": 0,
       "passed_age": 0,
       "capped": 0
     },
-    "https://evilgodfahim.github.io/npc/output/merged.xml": {
-      "fetched": 1000,
-      "passed_age": 432,
-      "capped": 432
+    "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en": {
+      "fetched": 38,
+      "passed_age": 30,
+      "capped": 30
     },
-    "https://news.google.com/rss/search?q=Bangladesh+economy+OR+economic+OR+GDP+OR+inflation+OR+%22central+bank%22+OR+%22Bangladesh+Bank%22+when:7d&hl=en-BD&gl=BD&ceid=BD:en": {
+    "https://news.google.com/rss/search?q=global+economy+OR+macroeconomics+OR+inflation+OR+recession+OR+%22central+bank%22+OR+%22interest+rates%22+OR+%22debt+crisis%22+OR+%22fiscal+policy%22+OR+%22trade+war%22&hl=en-US&gl=US&ceid=US:en": {
       "fetched": 100,
-      "passed_age": 27,
-      "capped": 27
+      "passed_age": 17,
+      "capped": 17
     },
-    "https://news.google.com/rss/search?q=Bangladesh+budget+OR+revenue+OR+NBR+OR+tax+OR+export+OR+import+OR+remittance+OR+%22trade+deficit%22+when:7d&hl=en-BD&gl=BD&ceid=BD:en": {
+    "https://news.google.com/rss/search?q=geopolitics+OR+geopolitical+OR+%22foreign+policy%22+OR+%22international+relations%22+OR+%22strategic+rivalry%22+OR+%22sphere+of+influence%22+OR+diplomacy&hl=en-US&gl=US&ceid=US:en": {
       "fetched": 100,
-      "passed_age": 23,
-      "capped": 23
+      "passed_age": 33,
+      "capped": 33
     },
-    "https://news.google.com/rss/search?q=Bangladesh+DSE+OR+CSE+OR+%22stock+market%22+OR+shares+OR+banking+OR+taka+OR+%22foreign+exchange%22+OR+forex+when:7d&hl=en-BD&gl=BD&ceid=BD:en": {
-      "fetched": 80,
-      "passed_age": 15,
-      "capped": 15
-    },
-    "https://news.google.com/rss/search?q=Bangladesh+investment+OR+FDI+OR+garments+OR+RMG+OR+EPZ+OR+BIDA+OR+industry+OR+factory+when:7d&hl=en-BD&gl=BD&ceid=BD:en": {
-      "fetched": 100,
-      "passed_age": 20,
-      "capped": 20
-    },
-    "https://news.google.com/rss/search?q=Bangladesh+IMF+OR+%22World+Bank%22+OR+loan+OR+debt+OR+%22foreign+reserve%22+OR+dollar+OR+ADB+when:7d&hl=en-BD&gl=BD&ceid=BD:en": {
-      "fetched": 72,
-      "passed_age": 11,
-      "capped": 11
-    },
-    "https://news.google.com/rss/search?q=%E0%A6%AC%E0%A6%BE%E0%A6%82%E0%A6%B2%E0%A6%BE%E0%A6%A6%E0%A7%87%E0%A6%B6+%E0%A6%85%E0%A6%B0%E0%A7%8D%E0%A6%A5%E0%A6%A8%E0%A7%80%E0%A6%A4%E0%A6%BF+OR+%E0%A6%AC%E0%A6%BE%E0%A6%9C%E0%A7%87%E0%A6%9F+OR+%E0%A6%B0%E0%A6%BE%E0%A6%9C%E0%A6%B8%E0%A7%8D%E0%A6%AC+OR+%E0%A6%8F%E0%A6%A8%E0%A6%AC%E0%A6%BF%E0%A6%86%E0%A6%B0+OR+%E0%A6%AE%E0%A7%82%E0%A6%B2%E0%A7%8D%E0%A6%AF%E0%A6%B8%E0%A7%8D%E0%A6%AB%E0%A7%80%E0%A6%A4%E0%A6%BF+when:7d&hl=bn-BD&gl=BD&ceid=BD:bn": {
-      "fetched": 53,
-      "passed_age": 11,
-      "capped": 11
-    },
-    "https://news.google.com/rss/search?q=%E0%A6%AC%E0%A6%BE%E0%A6%82%E0%A6%B2%E0%A6%BE%E0%A6%A6%E0%A7%87%E0%A6%B6+%E0%A6%AC%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%82%E0%A6%95+OR+%E0%A6%B6%E0%A7%87%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%B0%E0%A6%AC%E0%A6%BE%E0%A6%9C%E0%A6%BE%E0%A6%B0+OR+%E0%A6%A1%E0%A6%BF%E0%A6%8F%E0%A6%B8%E0%A6%87+OR+%E0%A6%9F%E0%A6%BE%E0%A6%95%E0%A6%BE+OR+%E0%A6%A1%E0%A6%B2%E0%A6%BE%E0%A6%B0+OR+%E0%A6%AC%E0%A7%88%E0%A6%A6%E0%A7%87%E0%A6%B6%E0%A6%BF%E0%A6%95+%E0%A6%AE%E0%A7%81%E0%A6%A6%E0%A7%8D%E0%A6%B0%E0%A6%BE+when:7d&hl=bn-BD&gl=BD&ceid=BD:bn": {
-      "fetched": 100,
-      "passed_age": 9,
-      "capped": 9
-    },
-    "https://news.google.com/rss/search?q=%E0%A6%AC%E0%A6%BE%E0%A6%82%E0%A6%B2%E0%A6%BE%E0%A6%A6%E0%A7%87%E0%A6%B6+%E0%A6%AC%E0%A6%BF%E0%A6%A8%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A7%8B%E0%A6%97+OR+%E0%A6%B0%E0%A6%AA%E0%A7%8D%E0%A6%A4%E0%A6%BE%E0%A6%A8%E0%A6%BF+OR+%E0%A6%86%E0%A6%AE%E0%A6%A6%E0%A6%BE%E0%A6%A8%E0%A6%BF+OR+%E0%A6%B0%E0%A7%87%E0%A6%AE%E0%A6%BF%E0%A6%9C%E0%A6%BC%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%B8+OR+%E0%A6%AA%E0%A7%8B%E0%A6%B6%E0%A6%BE%E0%A6%95+OR+%E0%A6%B6%E0%A6%BF%E0%A6%B2%E0%A7%8D%E0%A6%AA+when:7d&hl=bn-BD&gl=BD&ceid=BD:bn": {
+    "https://news.google.com/rss/search?q=%22quantum+computing%22+OR+%22nuclear+fusion%22+OR+CRISPR+OR+%22synthetic+biology%22+OR+AGI+OR+%22brain+computer+interface%22+OR+neuromorphic+OR+%22gene+editing%22+OR+%22dark+matter%22+OR+%22fusion+energy%22&hl=en-US&gl=US&ceid=US:en": {
       "fetched": 100,
       "passed_age": 26,
       "capped": 26
     },
-    "https://news.google.com/rss/search?q=%E0%A6%AC%E0%A6%BE%E0%A6%82%E0%A6%B2%E0%A6%BE%E0%A6%A6%E0%A7%87%E0%A6%B6+%E0%A6%86%E0%A6%87%E0%A6%8F%E0%A6%AE%E0%A6%8F%E0%A6%AB+OR+%E0%A6%AC%E0%A6%BF%E0%A6%B6%E0%A7%8D%E0%A6%AC%E0%A6%AC%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%82%E0%A6%95+OR+%E0%A6%8B%E0%A6%A3+OR+%E0%A6%B0%E0%A6%BF%E0%A6%9C%E0%A6%BE%E0%A6%B0%E0%A7%8D%E0%A6%AD+OR+%E0%A6%AC%E0%A7%88%E0%A6%A6%E0%A7%87%E0%A6%B6%E0%A6%BF%E0%A6%95+%E0%A6%B8%E0%A6%BE%E0%A6%B9%E0%A6%BE%E0%A6%AF%E0%A7%8D%E0%A6%AF+when:7d&hl=bn-BD&gl=BD&ceid=BD:bn": {
-      "fetched": 44,
+    "https://news.google.com/rss/search?q=espionage+OR+%22intelligence+agency%22+OR+CIA+OR+MI6+OR+Mossad+OR+FSB+OR+cyberespionage+OR+%22signals+intelligence%22+OR+%22covert+operation%22+OR+SIGINT&hl=en-US&gl=US&ceid=US:en": {
+      "fetched": 100,
+      "passed_age": 12,
+      "capped": 12
+    },
+    "https://news.google.com/rss/search?q=%22military+operation%22+OR+%22armed+conflict%22+OR+%22defense+contract%22+OR+%22weapons+system%22+OR+%22troop+deployment%22+OR+%22air+strike%22+OR+%22naval+exercise%22+OR+warfare+OR+%22theater+command%22&hl=en-US&gl=US&ceid=US:en": {
+      "fetched": 100,
+      "passed_age": 21,
+      "capped": 21
+    },
+    "https://news.google.com/rss/search?q=%22rare+earth%22+OR+%22critical+minerals%22+OR+%22energy+security%22+OR+%22oil+supply%22+OR+%22LNG%22+OR+%22pipeline%22+OR+%22food+security%22+OR+%22water+crisis%22+OR+%22resource+competition%22+OR+%22commodity+shock%22&hl=en-US&gl=US&ceid=US:en": {
+      "fetched": 100,
+      "passed_age": 33,
+      "capped": 33
+    },
+    "https://news.google.com/rss/search?q=%22cyberattack%22+OR+%22ransomware%22+OR+%22critical+infrastructure+attack%22+OR+%22disinformation+campaign%22+OR+%22information+warfare%22+OR+%22election+interference%22+OR+%22state+sponsored+hacking%22+OR+%22zero+day%22&hl=en-US&gl=US&ceid=US:en": {
+      "fetched": 100,
+      "passed_age": 7,
+      "capped": 7
+    },
+    "https://news.google.com/rss/search?q=%22Global+South%22+OR+%22emerging+markets%22+OR+ASEAN+OR+%22African+Union%22+OR+%22Belt+and+Road%22+OR+BRICS+OR+%22Latin+America+politics%22+OR+%22Southeast+Asia%22+OR+%22Sub-Saharan+Africa%22&hl=en-US&gl=US&ceid=US:en": {
+      "fetched": 100,
+      "passed_age": 54,
+      "capped": 54
+    },
+    "https://news.google.com/rss/search?q=%22space+warfare%22+OR+%22satellite+weapon%22+OR+%22anti+satellite%22+OR+%22space+force%22+OR+%22commercial+space%22+OR+%22lunar+race%22+OR+%22space+debris%22+OR+%22space+domain%22&hl=en-US&gl=US&ceid=US:en": {
+      "fetched": 100,
+      "passed_age": 8,
+      "capped": 8
+    },
+    "https://news.google.com/rss/search?q=biosecurity+OR+bioweapon+OR+%22pandemic+preparedness%22+OR+%22gain+of+function%22+OR+%22lab+leak%22+OR+pathogen+OR+%22biological+threat%22+OR+%22WHO+emergency%22+OR+%22epidemic+outbreak%22&hl=en-US&gl=US&ceid=US:en": {
+      "fetched": 100,
       "passed_age": 4,
       "capped": 4
+    },
+    "https://news.google.com/rss/search?q=%22climate+crisis%22+OR+%22extreme+weather%22+OR+%22sea+level+rise%22+OR+%22arctic+ice%22+OR+%22carbon+emissions%22+OR+%22COP%22+OR+%22climate+tipping+point%22+OR+%22environmental+collapse%22+OR+%22deforestation%22+OR+%22glacier+retreat%22&hl=en-US&gl=US&ceid=US:en": {
+      "fetched": 100,
+      "passed_age": 30,
+      "capped": 30
     }
   },
   "per_method": {
     "KL": 0,
-    "DIRECT": 4838
+    "DIRECT": 1138
   },
-  "total_fetched": 4838,
-  "total_passed_age": 1097,
+  "total_fetched": 1138,
+  "total_passed_age": 275,
   "total_new": 7,
   "total_signal_mistral": 0,
   "total_signal": 4,
-  "timestamp": "2026-09-06T00:38:25.372091",
+  "timestamp": "2026-09-06T05:07:23.272712",
   "total_signal_gemini": 4
 }
