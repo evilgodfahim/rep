@@ -47,26 +47,44 @@ except Exception:
 # -- FEEDS ---------------------------------------------------------------------
 
 FEED_URLS = [
-    "https://evilgodfahim.github.io/mr/curated_feedb.xml",
-    "https://evilgodfahim.github.io/mr/curated_feed.xml",
-    "https://evilgodfahim.github.io/mr/curated_feed_edit.xml",
-    "https://evilgodfahim.github.io/mr/curated_feed_bdit.xml",
-    "https://evilgodfahim.github.io/bdcd/curated_feed.xml",
-    "https://evilgodfahim.github.io/bdcdb/curated_feed.xml",
-    "https://evilgodfahim.github.io/bdl/final.xml",
-    "https://evilgodfahim.github.io/bdlb/final.xml",
-    "https://evilgodfahim.github.io/npc/output/merged.xml",
-    # Google News — English (BD edition)
-    "https://news.google.com/rss/search?q=Bangladesh+economy+OR+economic+OR+GDP+OR+inflation+OR+%22central+bank%22+OR+%22Bangladesh+Bank%22+when:7d&hl=en-BD&gl=BD&ceid=BD:en",
-    "https://news.google.com/rss/search?q=Bangladesh+budget+OR+revenue+OR+NBR+OR+tax+OR+export+OR+import+OR+remittance+OR+%22trade+deficit%22+when:7d&hl=en-BD&gl=BD&ceid=BD:en",
-    "https://news.google.com/rss/search?q=Bangladesh+DSE+OR+CSE+OR+%22stock+market%22+OR+shares+OR+banking+OR+taka+OR+%22foreign+exchange%22+OR+forex+when:7d&hl=en-BD&gl=BD&ceid=BD:en",
-    "https://news.google.com/rss/search?q=Bangladesh+investment+OR+FDI+OR+garments+OR+RMG+OR+EPZ+OR+BIDA+OR+industry+OR+factory+when:7d&hl=en-BD&gl=BD&ceid=BD:en",
-    "https://news.google.com/rss/search?q=Bangladesh+IMF+OR+%22World+Bank%22+OR+loan+OR+debt+OR+%22foreign+reserve%22+OR+dollar+OR+ADB+when:7d&hl=en-BD&gl=BD&ceid=BD:en",
-    # Google News — Bangla (BD edition)
-    "https://news.google.com/rss/search?q=%E0%A6%AC%E0%A6%BE%E0%A6%82%E0%A6%B2%E0%A6%BE%E0%A6%A6%E0%A7%87%E0%A6%B6+%E0%A6%85%E0%A6%B0%E0%A7%8D%E0%A6%A5%E0%A6%A8%E0%A7%80%E0%A6%A4%E0%A6%BF+OR+%E0%A6%AC%E0%A6%BE%E0%A6%9C%E0%A7%87%E0%A6%9F+OR+%E0%A6%B0%E0%A6%BE%E0%A6%9C%E0%A6%B8%E0%A7%8D%E0%A6%AC+OR+%E0%A6%8F%E0%A6%A8%E0%A6%AC%E0%A6%BF%E0%A6%86%E0%A6%B0+OR+%E0%A6%AE%E0%A7%82%E0%A6%B2%E0%A7%8D%E0%A6%AF%E0%A6%B8%E0%A7%8D%E0%A6%AB%E0%A7%80%E0%A6%A4%E0%A6%BF+when:7d&hl=bn-BD&gl=BD&ceid=BD:bn",
-    "https://news.google.com/rss/search?q=%E0%A6%AC%E0%A6%BE%E0%A6%82%E0%A6%B2%E0%A6%BE%E0%A6%A6%E0%A7%87%E0%A6%B6+%E0%A6%AC%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%82%E0%A6%95+OR+%E0%A6%B6%E0%A7%87%E0%A6%AF%E0%A6%BC%E0%A6%BE%E0%A6%B0%E0%A6%AC%E0%A6%BE%E0%A6%9C%E0%A6%BE%E0%A6%B0+OR+%E0%A6%A1%E0%A6%BF%E0%A6%8F%E0%A6%B8%E0%A6%87+OR+%E0%A6%9F%E0%A6%BE%E0%A6%95%E0%A6%BE+OR+%E0%A6%A1%E0%A6%B2%E0%A6%BE%E0%A6%B0+OR+%E0%A6%AC%E0%A7%88%E0%A6%A6%E0%A7%87%E0%A6%B6%E0%A6%BF%E0%A6%95+%E0%A6%AE%E0%A7%81%E0%A6%A6%E0%A7%8D%E0%A6%B0%E0%A6%BE+when:7d&hl=bn-BD&gl=BD&ceid=BD:bn",
-    "https://news.google.com/rss/search?q=%E0%A6%AC%E0%A6%BE%E0%A6%82%E0%A6%B2%E0%A6%BE%E0%A6%A6%E0%A7%87%E0%A6%B6+%E0%A6%AC%E0%A6%BF%E0%A6%A8%E0%A6%BF%E0%A6%AF%E0%A6%BC%E0%A7%8B%E0%A6%97+OR+%E0%A6%B0%E0%A6%AA%E0%A7%8D%E0%A6%A4%E0%A6%BE%E0%A6%A8%E0%A6%BF+OR+%E0%A6%86%E0%A6%AE%E0%A6%A6%E0%A6%BE%E0%A6%A8%E0%A6%BF+OR+%E0%A6%B0%E0%A7%87%E0%A6%AE%E0%A6%BF%E0%A6%9C%E0%A6%BC%E0%A6%BE%E0%A6%A8%E0%A7%8D%E0%A6%B8+OR+%E0%A6%AA%E0%A7%8B%E0%A6%B6%E0%A6%BE%E0%A6%95+OR+%E0%A6%B6%E0%A6%BF%E0%A6%B2%E0%A7%8D%E0%A6%AA+when:7d&hl=bn-BD&gl=BD&ceid=BD:bn",
-    "https://news.google.com/rss/search?q=%E0%A6%AC%E0%A6%BE%E0%A6%82%E0%A6%B2%E0%A6%BE%E0%A6%A6%E0%A7%87%E0%A6%B6+%E0%A6%86%E0%A6%87%E0%A6%8F%E0%A6%AE%E0%A6%8F%E0%A6%AB+OR+%E0%A6%AC%E0%A6%BF%E0%A6%B6%E0%A7%8D%E0%A6%AC%E0%A6%AC%E0%A7%8D%E0%A6%AF%E0%A6%BE%E0%A6%82%E0%A6%95+OR+%E0%A6%8B%E0%A6%A3+OR+%E0%A6%B0%E0%A6%BF%E0%A6%9C%E0%A6%BE%E0%A6%B0%E0%A7%8D%E0%A6%AD+OR+%E0%A6%AC%E0%A7%88%E0%A6%A6%E0%A7%87%E0%A6%B6%E0%A6%BF%E0%A6%95+%E0%A6%B8%E0%A6%BE%E0%A6%B9%E0%A6%BE%E0%A6%AF%E0%A7%8D%E0%A6%AF+when:7d&hl=bn-BD&gl=BD&ceid=BD:bn",
+    # 1. World's Leading Organizations
+    "https://news.google.com/rss/search?q=%22United+Nations%22+OR+NATO+OR+IMF+OR+%22World+Bank%22+OR+G20+OR+G7+OR+WTO+OR+OPEC+OR+WHO&hl=en-US&gl=US&ceid=US:en",
+
+    # 2. Biggest News (Top Global Headlines)
+    "https://news.google.com/rss?hl=en-US&gl=US&ceid=US:en",
+
+    # 3. World Scale Macroeconomy
+    "https://news.google.com/rss/search?q=global+economy+OR+macroeconomics+OR+inflation+OR+recession+OR+%22central+bank%22+OR+%22interest+rates%22+OR+%22debt+crisis%22+OR+%22fiscal+policy%22+OR+%22trade+war%22&hl=en-US&gl=US&ceid=US:en",
+
+    # 4. Geopolitical Analysis & Events
+    "https://news.google.com/rss/search?q=geopolitics+OR+geopolitical+OR+%22foreign+policy%22+OR+%22international+relations%22+OR+%22strategic+rivalry%22+OR+%22sphere+of+influence%22+OR+diplomacy&hl=en-US&gl=US&ceid=US:en",
+
+    # 5. Groundbreaking Tech (non-mainstream)
+    "https://news.google.com/rss/search?q=%22quantum+computing%22+OR+%22nuclear+fusion%22+OR+CRISPR+OR+%22synthetic+biology%22+OR+AGI+OR+%22brain+computer+interface%22+OR+neuromorphic+OR+%22gene+editing%22+OR+%22dark+matter%22+OR+%22fusion+energy%22&hl=en-US&gl=US&ceid=US:en",
+
+    # 6. Intelligence News
+    "https://news.google.com/rss/search?q=espionage+OR+%22intelligence+agency%22+OR+CIA+OR+MI6+OR+Mossad+OR+FSB+OR+cyberespionage+OR+%22signals+intelligence%22+OR+%22covert+operation%22+OR+SIGINT&hl=en-US&gl=US&ceid=US:en",
+
+    # 7. Military & Conflict
+    "https://news.google.com/rss/search?q=%22military+operation%22+OR+%22armed+conflict%22+OR+%22defense+contract%22+OR+%22weapons+system%22+OR+%22troop+deployment%22+OR+%22air+strike%22+OR+%22naval+exercise%22+OR+warfare+OR+%22theater+command%22&hl=en-US&gl=US&ceid=US:en",
+
+    # 8. Energy & Critical Resources
+    "https://news.google.com/rss/search?q=%22rare+earth%22+OR+%22critical+minerals%22+OR+%22energy+security%22+OR+%22oil+supply%22+OR+%22LNG%22+OR+%22pipeline%22+OR+%22food+security%22+OR+%22water+crisis%22+OR+%22resource+competition%22+OR+%22commodity+shock%22&hl=en-US&gl=US&ceid=US:en",
+
+    # 9. Cyber & Information Warfare
+    "https://news.google.com/rss/search?q=%22cyberattack%22+OR+%22ransomware%22+OR+%22critical+infrastructure+attack%22+OR+%22disinformation+campaign%22+OR+%22information+warfare%22+OR+%22election+interference%22+OR+%22state+sponsored+hacking%22+OR+%22zero+day%22&hl=en-US&gl=US&ceid=US:en",
+
+    # 10. Global South & Emerging Markets
+    "https://news.google.com/rss/search?q=%22Global+South%22+OR+%22emerging+markets%22+OR+ASEAN+OR+%22African+Union%22+OR+%22Belt+and+Road%22+OR+BRICS+OR+%22Latin+America+politics%22+OR+%22Southeast+Asia%22+OR+%22Sub-Saharan+Africa%22&hl=en-US&gl=US&ceid=US:en",
+
+    # 11. Space (Strategic & Military)
+    "https://news.google.com/rss/search?q=%22space+warfare%22+OR+%22satellite+weapon%22+OR+%22anti+satellite%22+OR+%22space+force%22+OR+%22commercial+space%22+OR+%22lunar+race%22+OR+%22space+debris%22+OR+%22space+domain%22&hl=en-US&gl=US&ceid=US:en",
+
+    # 12. Biosecurity
+    "https://news.google.com/rss/search?q=biosecurity+OR+bioweapon+OR+%22pandemic+preparedness%22+OR+%22gain+of+function%22+OR+%22lab+leak%22+OR+pathogen+OR+%22biological+threat%22+OR+%22WHO+emergency%22+OR+%22epidemic+outbreak%22&hl=en-US&gl=US&ceid=US:en",
+
+    # 13. Climate & Environment
+    "https://news.google.com/rss/search?q=%22climate+crisis%22+OR+%22extreme+weather%22+OR+%22sea+level+rise%22+OR+%22arctic+ice%22+OR+%22carbon+emissions%22+OR+%22COP%22+OR+%22climate+tipping+point%22+OR+%22environmental+collapse%22+OR+%22deforestation%22+OR+%22glacier+retreat%22&hl=en-US&gl=US&ceid=US:en",
 ]
 
 # Google News feed URL prefix — used to identify which links need decoding
@@ -94,36 +112,35 @@ MAX_FEED_ITEMS        = 500
 
 # -- PROMPT --------------------------------------------------------------------
 
-PROMPT = """ROLE: News classifier for Bangladesh economics and finance. Input is a numbered list of article titles in English or Bengali. Output must be valid JSON only — no markdown, no explanation.
+PROMPT = """ROLE: News classifier for a global intelligence feed covering 13 domains. Input is a numbered list of article titles. Output must be valid JSON only — no markdown, no explanation.
 
 TASK: Return the 0-based indices of every SIGNAL article.
 
-SIGNAL — include if the article relates to ANY of the following concerning Bangladesh:
-1. Bangladesh Bank, monetary policy, policy rate, repo, CRR/SLR, money supply, forex intervention
-2. Taka exchange rate, forex reserves, currency movement, dollar-taka
-3. Remittances — inflow data, trends, policy
-4. Inflation, CPI, PPI, cost of living, price levels
-5. Exports, imports, trade balance, current account, BoP, RMG/garments sector
-6. Tariffs, customs, trade agreements, NBR tax/VAT policy
-7. National budget, supplementary budget, government revenue, spending, fiscal deficit
-8. Public debt, T-bills, bonds, government borrowing, sovereign debt
-9. IMF, World Bank, ADB, AIIB, IDB — any programme, loan, review, or disbursement involving Bangladesh
-10. FDI, investment climate, BIDA, EPZ, BEPZA, industrial zones
-11. GDP, GNI, economic growth, national income, per capita income
-12. DSE, CSE, stock market, capital markets, BSEC regulation
-13. Banking sector — NPLs, credit growth, BB prudential rules, bank mergers, licences
-14. Energy prices, fuel price changes, electricity/gas tariff adjustments
-15. Analysis, forecasts, expert commentary, or opinion pieces about Bangladesh's economy or finance
-16. Any significant economic or financial development at national scale in Bangladesh
+SIGNAL — include if the article reports a genuinely significant development in ANY of these domains:
 
-NOISE — exclude ONLY if the article is clearly about:
-- Sports, entertainment, celebrity, lifestyle with no economic angle
-- Individual crime or court cases with no stated economic significance
-- Natural disasters or accidents with no stated economic impact
-- Purely foreign news with no Bangladesh connection
-- A single small company's routine business (earnings, product launch, branch opening) with no stated sector-wide or national significance
+1. WORLD ORGANIZATIONS — UN, NATO, IMF, World Bank, G7/G20, WTO, OPEC, WHO: major decisions, resolutions, sanctions, leadership changes, structural shifts, funding actions
+2. BREAKING GLOBAL NEWS — events with clear world-scale consequence: wars declared, governments fallen, catastrophic disasters, assassination of major figures, historic agreements
+3. MACROECONOMY — global inflation trajectory, recession signals, central bank pivots, sovereign debt crises, major currency shocks, trade war escalations, BIS/IMF/World Bank outlooks
+4. GEOPOLITICS — shifts in alliance architecture, territorial disputes, major diplomatic ruptures or breakthroughs, great-power competition moves, strategic doctrine changes
+5. GROUNDBREAKING TECH — verified breakthroughs in quantum, fusion, CRISPR, AGI, BCI, neuromorphic computing, synthetic biology — peer-reviewed, institutional, or credible first-reports only; not product launches or incremental updates
+6. INTELLIGENCE — confirmed espionage operations, intelligence agency actions, SIGINT/HUMINT revelations, covert programs exposed, spy scandals with state-level actors
+7. MILITARY & CONFLICT — active combat operations, verified troop movements, defense treaty activations, major weapons system deployments, strategic strikes, theater-level command changes
+8. ENERGY & CRITICAL RESOURCES — oil/gas supply disruptions, rare earth export controls, pipeline sabotage or deals, food/water security crises at national or regional scale, commodity shocks with macroeconomic spillover
+9. CYBER & INFORMATION WARFARE — confirmed state-sponsored cyberattacks on critical infrastructure, major zero-day exploitation in the wild, large-scale disinformation ops with attribution, election interference with evidence
+10. GLOBAL SOUTH & EMERGING MARKETS — political realignment, debt restructuring, BRI developments, BRICS expansion moves, ASEAN/AU/CELAC significant decisions, democratic backsliding or breakthroughs
+11. SPACE — anti-satellite weapons tests, military space doctrine, strategic satellite launches, major commercial space milestones (lunar landing, crewed mission), debris events threatening infrastructure
+12. BIOSECURITY — outbreak with pandemic potential, gain-of-function research news, biosafety-level incidents, bioweapon allegations with evidence, WHO emergency declarations, pathogen containment failures
+13. CLIMATE & ENVIRONMENT — tipping point science, extreme weather events causing major humanitarian or economic impact, COP agreements or failures, Arctic/Antarctic threshold crossings, deforestation at nation-state scale
 
-DEFAULT RULE: When in doubt, classify as SIGNAL. Prefer inclusion over exclusion. A borderline article about Bangladesh's economic landscape should always be SIGNAL.
+NOISE — exclude if the article is:
+- A keyword false positive: "pipeline" (software), "fusion" (music/food), "intelligence" (business analytics), "space" (office/retail), "zero day" (sales event)
+- Celebrity, sports, lifestyle, entertainment with no strategic angle
+- A minor company's routine business dressed in strategic language
+- Speculative opinion with no factual news peg
+- A rehash or wire-service reprint of a story already clearly covered (only exclude if obviously redundant, not merely similar)
+- Purely local/national news with no discernible world-scale consequence
+
+DEFAULT RULE: When in doubt, classify as SIGNAL. These feeds are pre-filtered for global significance — err heavily toward inclusion. Only exclude what is clearly noise or a keyword accident.
 
 OUTPUT FORMAT — respond with ONLY this JSON object, nothing else:
 {"signal": [list of 0-based indices]}
@@ -147,7 +164,7 @@ STATS = {
     "total_new":           0,
     "total_signal_gemini": 0,
     "total_signal":        0,
-    "timestamp":           None,
+    "timestamp":            None,
 }
 
 # -- GOOGLE NEWS URL DECODING --------------------------------------------------
@@ -747,7 +764,11 @@ def main():
         return
 
     signal_articles   = [new_articles[i] for i in gemini_indices]
-    excluded_articles = [new_articles[i] for i in range(len(new_articles)) if i not in set(gemini_indices)]
+    excluded_articles = [
+        new_articles[i]
+        for i in range(len(new_articles))
+        if i not in set(gemini_indices)
+    ]
 
     generate_xml_feed(
         signal_articles,
