@@ -12,38 +12,38 @@
     },
     "https://news.google.com/rss/search?q=global+economy+OR+macroeconomics+OR+inflation+OR+recession+OR+%22central+bank%22+OR+%22interest+rates%22+OR+%22debt+crisis%22+OR+%22fiscal+policy%22+OR+%22trade+war%22&hl=en-US&gl=US&ceid=US:en": {
       "fetched": 100,
-      "passed_age": 39,
-      "capped": 39
+      "passed_age": 40,
+      "capped": 40
     },
     "https://news.google.com/rss/search?q=geopolitics+OR+geopolitical+OR+%22foreign+policy%22+OR+%22international+relations%22+OR+%22strategic+rivalry%22+OR+%22sphere+of+influence%22+OR+diplomacy&hl=en-US&gl=US&ceid=US:en": {
       "fetched": 100,
-      "passed_age": 72,
-      "capped": 72
+      "passed_age": 74,
+      "capped": 74
     },
     "https://news.google.com/rss/search?q=%22quantum+computing%22+OR+%22nuclear+fusion%22+OR+CRISPR+OR+%22synthetic+biology%22+OR+AGI+OR+%22brain+computer+interface%22+OR+neuromorphic+OR+%22gene+editing%22+OR+%22dark+matter%22+OR+%22fusion+energy%22&hl=en-US&gl=US&ceid=US:en": {
       "fetched": 100,
-      "passed_age": 68,
-      "capped": 68
+      "passed_age": 69,
+      "capped": 69
     },
     "https://news.google.com/rss/search?q=espionage+OR+%22intelligence+agency%22+OR+CIA+OR+MI6+OR+Mossad+OR+FSB+OR+cyberespionage+OR+%22signals+intelligence%22+OR+%22covert+operation%22+OR+SIGINT&hl=en-US&gl=US&ceid=US:en": {
       "fetched": 100,
-      "passed_age": 27,
-      "capped": 27
+      "passed_age": 30,
+      "capped": 30
     },
     "https://news.google.com/rss/search?q=%22military+operation%22+OR+%22armed+conflict%22+OR+%22defense+contract%22+OR+%22weapons+system%22+OR+%22troop+deployment%22+OR+%22air+strike%22+OR+%22naval+exercise%22+OR+warfare+OR+%22theater+command%22&hl=en-US&gl=US&ceid=US:en": {
       "fetched": 100,
-      "passed_age": 51,
-      "capped": 51
+      "passed_age": 54,
+      "capped": 54
     },
     "https://news.google.com/rss/search?q=%22rare+earth%22+OR+%22critical+minerals%22+OR+%22energy+security%22+OR+%22oil+supply%22+OR+%22LNG%22+OR+%22pipeline%22+OR+%22food+security%22+OR+%22water+crisis%22+OR+%22resource+competition%22+OR+%22commodity+shock%22&hl=en-US&gl=US&ceid=US:en": {
       "fetched": 100,
-      "passed_age": 90,
-      "capped": 90
+      "passed_age": 92,
+      "capped": 92
     },
     "https://news.google.com/rss/search?q=%22cyberattack%22+OR+%22ransomware%22+OR+%22critical+infrastructure+attack%22+OR+%22disinformation+campaign%22+OR+%22information+warfare%22+OR+%22election+interference%22+OR+%22state+sponsored+hacking%22+OR+%22zero+day%22&hl=en-US&gl=US&ceid=US:en": {
       "fetched": 100,
-      "passed_age": 50,
-      "capped": 50
+      "passed_age": 54,
+      "capped": 54
     },
     "https://news.google.com/rss/search?q=%22Global+South%22+OR+%22emerging+markets%22+OR+ASEAN+OR+%22African+Union%22+OR+%22Belt+and+Road%22+OR+BRICS+OR+%22Latin+America+politics%22+OR+%22Southeast+Asia%22+OR+%22Sub-Saharan+Africa%22&hl=en-US&gl=US&ceid=US:en": {
       "fetched": 100,
@@ -52,18 +52,18 @@
     },
     "https://news.google.com/rss/search?q=%22space+warfare%22+OR+%22satellite+weapon%22+OR+%22anti+satellite%22+OR+%22space+force%22+OR+%22commercial+space%22+OR+%22lunar+race%22+OR+%22space+debris%22+OR+%22space+domain%22&hl=en-US&gl=US&ceid=US:en": {
       "fetched": 100,
-      "passed_age": 34,
-      "capped": 34
+      "passed_age": 35,
+      "capped": 35
     },
     "https://news.google.com/rss/search?q=biosecurity+OR+bioweapon+OR+%22pandemic+preparedness%22+OR+%22gain+of+function%22+OR+%22lab+leak%22+OR+pathogen+OR+%22biological+threat%22+OR+%22WHO+emergency%22+OR+%22epidemic+outbreak%22&hl=en-US&gl=US&ceid=US:en": {
       "fetched": 100,
-      "passed_age": 9,
-      "capped": 9
+      "passed_age": 8,
+      "capped": 8
     },
     "https://news.google.com/rss/search?q=%22climate+crisis%22+OR+%22extreme+weather%22+OR+%22sea+level+rise%22+OR+%22arctic+ice%22+OR+%22carbon+emissions%22+OR+%22COP%22+OR+%22climate+tipping+point%22+OR+%22environmental+collapse%22+OR+%22deforestation%22+OR+%22glacier+retreat%22&hl=en-US&gl=US&ceid=US:en": {
       "fetched": 100,
-      "passed_age": 68,
-      "capped": 68
+      "passed_age": 64,
+      "capped": 64
     }
   },
   "per_method": {
@@ -71,10 +71,10 @@
     "DIRECT": 1238
   },
   "total_fetched": 1238,
-  "total_passed_age": 714,
-  "total_new": 411,
+  "total_passed_age": 726,
+  "total_new": 135,
   "total_signal_mistral": 0,
-  "total_signal": 204,
-  "timestamp": "2026-09-08T20:52:06.056808",
-  "total_signal_gemini": 204
+  "total_signal": 81,
+  "timestamp": "2026-09-08T23:21:38.195970",
+  "total_signal_gemini": 81
 }
