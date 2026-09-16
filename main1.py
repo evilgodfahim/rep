@@ -24,8 +24,11 @@ Changes from previous version:
 - Switched from deprecated google.generativeai to google.genai (google-genai).
 - _set_gha_output(): writes has_signal=true/false to $GITHUB_OUTPUT so the
   Actions workflow can skip the commit/push step when AI selects 0 articles.
+- fetch_og_image(): fetches og:image from article pages as thumbnail fallback;
+  applied in parallel inside generate_xml_feed() for articles missing thumbnails.
 """
 
+import concurrent.futures
 import feedparser
 from googlenewsdecoder import new_decoderv1 as _gnews_decoderv1
 from google import genai
@@ -408,6 +411,44 @@ def extract_image_url(entry, base_link=None):
                 return found
     return None
 
+
+def fetch_og_image(url: str, timeout: int = 4) -> str | None:
+    """
+    Fetch the og:image meta tag from an article page as a thumbnail fallback.
+    Reads only the first 64 KB of the response — enough to cover <head> on
+    virtually every page — to keep latency low.
+    Returns the image URL string, or None on any failure.
+    """
+    if not url or not url.startswith("http"):
+        return None
+    try:
+        resp = requests.get(
+            url,
+            timeout=timeout,
+            headers={"User-Agent": "Mozilla/5.0 (compatible; FeedBot/1.0)"},
+            stream=True,
+        )
+        if resp.status_code != 200:
+            return None
+        chunk = b""
+        for block in resp.iter_content(chunk_size=8192):
+            chunk += block
+            if len(chunk) >= 65536:
+                break
+        text = chunk.decode("utf-8", errors="replace")
+        for pattern in (
+            r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']',
+            r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image["\']',
+        ):
+            m = re.search(pattern, text, re.I)
+            if m:
+                img = m.group(1).strip()
+                if img.startswith("http"):
+                    return img
+    except Exception:
+        pass
+    return None
+
 # -- FETCHING ------------------------------------------------------------------
 
 def fetch_via_kl(kl_endpoint, target_feed_url, timeout=20):
@@ -669,6 +710,26 @@ def generate_xml_feed(articles, output_file, feed_title=None, feed_description=N
         link_el = item.find("link")
         if link_el is not None and link_el.text:
             existing_links.add(link_el.text.strip())
+
+    # Batch-fetch og:image in parallel for articles that have no thumbnail yet.
+    # Only targets articles not already in the feed (new ones we're about to write).
+    _needs_thumb = [
+        a for a in articles
+        if not a.get("thumbnail")
+        and (a.get("link") or "").startswith("http")
+        and a.get("link") not in existing_links
+    ]
+    if _needs_thumb:
+        print(f"  Fetching og:image for {len(_needs_thumb)} article(s) missing thumbnails…")
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as _pool:
+            _og_imgs = list(_pool.map(lambda a: fetch_og_image(a["link"]), _needs_thumb))
+        _found = 0
+        for _art, _img in zip(_needs_thumb, _og_imgs):
+            if _img:
+                _art["thumbnail"]      = _img
+                _art["thumbnail_type"] = get_mime_for_url(_img)
+                _found += 1
+        print(f"  og:image resolved: {_found}/{len(_needs_thumb)}")
 
     added = 0
     for a in articles:
