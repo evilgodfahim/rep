@@ -39,17 +39,34 @@ jobs:
           fi
 
       - name: Run RSS processor
-        id: processor
         shell: bash
         env:
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
           MS: ${{ secrets.MS }}
         run: |
           set -euo pipefail
-          python main1.py
+
+          max_attempts=4
+          base_delay=300
+          delay_step=120
+
+          for attempt in $(seq 1 $max_attempts); do
+            echo "Attempt $attempt/$max_attempts"
+            if python main1.py; then
+              exit 0
+            fi
+
+            if [ $attempt -lt $max_attempts ]; then
+              delay=$(( base_delay + (attempt - 1) * delay_step ))
+              echo "Failed. Waiting ${delay}s before retry $((attempt + 1))..."
+              sleep $delay
+            fi
+          done
+
+          echo "All $max_attempts attempts exhausted."
+          exit 1
 
       - name: Commit processed files
-        if: steps.processor.outputs.has_signal == 'true'
         shell: bash
         run: |
           set -euo pipefail
@@ -57,7 +74,7 @@ jobs:
           git config --local user.email "github-actions[bot]@users.noreply.github.com"
           git config --local user.name "github-actions[bot]"
 
-          git add -A
+          git add processed_articles.json selected_articles.json fetch_stats.json *.xml
 
           if ! git diff --cached --quiet; then
             git commit -m "Update feeds - $(date -u +'%Y-%m-%d %H:%M:%S UTC')"
