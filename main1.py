@@ -17,6 +17,7 @@ import json
 import os
 import re
 import time
+import sys
 from datetime import datetime, timezone, timedelta
 from pathlib import Path
 import xml.etree.ElementTree as ET
@@ -333,7 +334,7 @@ _CTRL_RE = re.compile(
 def _sanitize_xml_bytes(raw: str) -> str:
     raw = _CTRL_RE.sub(
         "",
-        raw,
+        raw
     )
 
     raw = re.sub(
@@ -1492,8 +1493,7 @@ def send_to_gemini(
             "Gemini classification error: "
             f"{e}"
         )
-
-        return []
+        sys.exit(1)
 
 
 # -- XML -----------------------------------------------------------------------
@@ -1657,9 +1657,7 @@ def _load_or_create(
 
     root = ET.Element(
         "rss",
-        {
-            "version": "2.0"
-        },
+        {"version": "2.0"},
     )
 
     tree = ET.ElementTree(
