@@ -2,7 +2,7 @@ name: RSS Feed Processor
 
 on:
   schedule:
-    - cron: "50 */4 * * *"
+    - cron: "50 */2 * * *"
   workflow_dispatch: {}
 
 concurrency:
