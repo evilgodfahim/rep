@@ -2,7 +2,7 @@ name: RSS Feed Processor
 
 on:
   schedule:
-    - cron: "*/30 * * * *"
+    - cron: "*/10 * * * *"
   workflow_dispatch: {}
 
 concurrency:
@@ -48,7 +48,7 @@ jobs:
 
           max_attempts=5
           base_delay=60
-          delay_step=30
+          delay_step=3
 
           for attempt in $(seq 1 $max_attempts); do
             echo "Attempt $attempt/$max_attempts"
