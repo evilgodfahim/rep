@@ -106,7 +106,7 @@ KL_API_FEEDS = set()
 
 # -- CONFIG --------------------------------------------------------------------
 
-GEMINI_MODEL = "gemini-3.5-flash-lite"
+MISTRAL_MODEL = "gemini-3.5-flash-lite"
 
 SEEN_FILE = "seen.json"
 SELECTED_FILE = "econ_selected_articles.json"
