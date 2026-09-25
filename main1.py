@@ -1435,65 +1435,30 @@ def extract_signal_indices(
     return []
 
 
-def send_to_gemini(
-    articles,
-):
-    api_key = os.environ.get(
-        "GEMINI_API_KEY"
+def send_to_mistral(articles):
+    api_key = os.environ.get("GEMINI_API_KEY")
+    if not api_key or not articles:
+        return {"signal": [], "longread": []}
+
+    client = genai.Client(api_key=api_key)
+    titles_text = "\n".join(
+        f"{i}. {a.get('title', '')}" for i, a in enumerate(articles)
     )
 
-    if (
-        not api_key
-        or not articles
-    ):
-        return []
-
-    try:
-        client = genai.Client(
-            api_key=api_key
-        )
-
-        titles_text = "\n".join(
-            [
-                f"{i}. "
-                f"{a.get('title', '')}"
-                for i, a
-                in enumerate(
-                    articles
-                )
-            ]
-        )
-
-        prompt = PROMPT.replace(
-            "{titles}",
-            titles_text,
-        )
-
-        response = (
-            client.models.generate_content(
-                model=GEMINI_MODEL,
-                contents=prompt,
-                config=genai.types.GenerateContentConfig(
-                    response_mime_type="application/json",
-                ),
+    for attempt in range(2):
+        try:
+            chat = client.chats.create(model=MISTRAL_MODEL)
+            response = chat.send_message(
+                PROMPT.format(titles=titles_text),
+                config={"response_mime_type": "application/json"},
             )
-        )
+            text = response.text if hasattr(response, "text") else ""
+            return extract_json_object(text)
+        except Exception as e:
+            print(f"Gemini classification error: {e}")
+            sys.exit(1)
 
-        text = (
-            response.text
-            or ""
-        )
-
-        return extract_signal_indices(
-            text
-        )
-
-    except Exception as e:
-        print(
-            "Gemini classification error: "
-            f"{e}"
-        )
-        sys.exit(1)
+    return {"signal": [], "longread": []}
 
 
 # -- XML -----------------------------------------------------------------------
@@ -2083,7 +2048,7 @@ def main():
     )
 
     gemini_indices = (
-        send_to_gemini(
+        send_to_mistral(
             new_articles
         )
     )
