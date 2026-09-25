@@ -47,8 +47,8 @@ jobs:
           set -euo pipefail
 
           max_attempts=4
-          base_delay=600
-          delay_step=300
+          base_delay=60
+          delay_step=30
 
           for attempt in $(seq 1 $max_attempts); do
             echo "Attempt $attempt/$max_attempts"
