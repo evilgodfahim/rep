@@ -106,7 +106,7 @@ KL_API_FEEDS = set()
 
 # -- CONFIG --------------------------------------------------------------------
 
-MISTRAL_MODEL = "gemini-3.5-flash-lite"
+MISTRAL_MODEL = "gemini-2.5-flash-lite-preview-06-17"
 
 SEEN_FILE = "seen.json"
 SELECTED_FILE = "econ_selected_articles.json"
@@ -191,67 +191,26 @@ STATS = {
 
 # -- GITHUB ACTIONS OUTPUT -----------------------------------------------------
 
-def _set_gha_output(
-    name: str,
-    value: str,
-) -> None:
-    """
-    Write name=value to $GITHUB_OUTPUT
-    when running inside GitHub Actions.
-    """
-
-    output_file = os.environ.get(
-        "GITHUB_OUTPUT"
-    )
-
+def _set_gha_output(name: str, value: str) -> None:
+    output_file = os.environ.get("GITHUB_OUTPUT")
     if not output_file:
         return
-
-    with open(
-        output_file,
-        "a",
-        encoding="utf-8",
-    ) as fh:
-        fh.write(
-            f"{name}={value}\n"
-        )
+    with open(output_file, "a", encoding="utf-8") as fh:
+        fh.write(f"{name}={value}\n")
 
 
 # -- GOOGLE NEWS URL DECODING --------------------------------------------------
 
 def is_google_news_url(url: str) -> bool:
-    return any(
-        url.startswith(p)
-        for p in _GNEWS_PREFIXES
-    )
+    return any(url.startswith(p) for p in _GNEWS_PREFIXES)
 
 
-def decode_google_news_url(
-    gnews_url: str,
-    _retries: int = 3,
-) -> str:
-    """
-    Decode a Google News redirect URL.
-
-    Supports both:
-      - googlenewsdecoder >= 0.2.1 -> gnewsdecoder()
-      - older versions -> new_decoderv1()
-
-    Returns the original URL if decoding fails.
-    """
-
-    if (
-        not gnews_url
-        or not is_google_news_url(gnews_url)
-    ):
+def decode_google_news_url(gnews_url: str, _retries: int = 3) -> str:
+    if not gnews_url or not is_google_news_url(gnews_url):
         return gnews_url
 
     if _gnews_decoder is None:
-        print(
-            "[WARN] No compatible "
-            "googlenewsdecoder API found."
-        )
-
+        print("[WARN] No compatible googlenewsdecoder API found.")
         return gnews_url
 
     delay = 1.0
@@ -259,52 +218,24 @@ def decode_google_news_url(
     for attempt in range(_retries):
         try:
             if _GNEWS_DECODER_API == "new":
-                result = _gnews_decoder(
-                    gnews_url,
-                    interval=None,
-                    timeout=15.0,
-                )
-
+                result = _gnews_decoder(gnews_url, interval=None, timeout=15.0)
                 if (
                     isinstance(result, dict)
                     and result.get("success")
                     and result.get("decoded_url")
                 ):
-                    decoded = result[
-                        "decoded_url"
-                    ]
-
-                    if (
-                        isinstance(
-                            decoded,
-                            str,
-                        )
-                        and decoded.startswith("http")
-                    ):
+                    decoded = result["decoded_url"]
+                    if isinstance(decoded, str) and decoded.startswith("http"):
                         return decoded
-
             else:
-                result = _gnews_decoder(
-                    gnews_url,
-                    interval=None,
-                )
-
+                result = _gnews_decoder(gnews_url, interval=None)
                 if (
                     isinstance(result, dict)
                     and result.get("status")
                     and result.get("decoded_url")
                 ):
-                    decoded = result[
-                        "decoded_url"
-                    ]
-
-                    if (
-                        isinstance(
-                            decoded,
-                            str,
-                        )
-                        and decoded.startswith("http")
-                    ):
+                    decoded = result["decoded_url"]
+                    if isinstance(decoded, str) and decoded.startswith("http"):
                         return decoded
 
             if attempt < _retries - 1:
@@ -316,44 +247,30 @@ def decode_google_news_url(
                 time.sleep(delay)
                 delay *= 2
             else:
-                print(
-                    f"[WARN] gnews decode failed "
-                    f"for {gnews_url}: {e}"
-                )
+                print(f"[WARN] gnews decode failed for {gnews_url}: {e}")
 
     return gnews_url
 
 
 # -- XML SANITIZATION ----------------------------------------------------------
 
-_CTRL_RE = re.compile(
-    r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]'
-)
+_CTRL_RE = re.compile(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]')
 
 
 def _sanitize_xml_bytes(raw: str) -> str:
-    raw = _CTRL_RE.sub(
-        "",
-        raw
-    )
-
+    raw = _CTRL_RE.sub("", raw)
     raw = re.sub(
         r'&(?!(?:[a-zA-Z][a-zA-Z0-9]*|#[0-9]+|#x[0-9a-fA-F]+);)',
         '&amp;',
         raw,
     )
-
     return raw
 
 
 def _safe_text(value: str) -> str:
     if not value:
         return value
-
-    return _html_mod.escape(
-        value,
-        quote=False,
-    )
+    return _html_mod.escape(value, quote=False)
 
 
 # -- I/O -----------------------------------------------------------------------
@@ -361,636 +278,245 @@ def _safe_text(value: str) -> str:
 def load_seen_links():
     if Path(SEEN_FILE).exists():
         try:
-            with open(
-                SEEN_FILE,
-                "r",
-                encoding="utf-8",
-            ) as f:
+            with open(SEEN_FILE, "r", encoding="utf-8") as f:
                 data = json.load(f)
-
-            return set(
-                data.get(
-                    "links",
-                    [],
-                )
-            )
-
+            return set(data.get("links", []))
         except Exception:
             pass
-
     return set()
 
 
-def save_seen_links(
-    seen_links,
-):
-    with open(
-        SEEN_FILE,
-        "w",
-        encoding="utf-8",
-    ) as f:
-        json.dump(
-            {
-                "links": sorted(
-                    seen_links
-                )
-            },
-            f,
-            indent=2,
-            ensure_ascii=False,
-        )
+def save_seen_links(seen_links):
+    with open(SEEN_FILE, "w", encoding="utf-8") as f:
+        json.dump({"links": sorted(seen_links)}, f, indent=2, ensure_ascii=False)
 
 
-def save_selected_articles(
-    articles,
-):
+def save_selected_articles(articles):
     existing = []
-
-    if Path(
-        SELECTED_FILE
-    ).exists():
+    if Path(SELECTED_FILE).exists():
         try:
-            with open(
-                SELECTED_FILE,
-                "r",
-                encoding="utf-8",
-            ) as f:
+            with open(SELECTED_FILE, "r", encoding="utf-8") as f:
                 existing = json.load(f)
-
         except Exception:
             pass
 
-    existing_links = {
-        a.get("link")
-        for a in existing
-    }
+    existing_links = {a.get("link") for a in existing}
+    merged = existing + [a for a in articles if a.get("link") not in existing_links]
 
-    merged = existing + [
-        a
-        for a in articles
-        if a.get("link")
-        not in existing_links
-    ]
-
-    with open(
-        SELECTED_FILE,
-        "w",
-        encoding="utf-8",
-    ) as f:
-        json.dump(
-            merged,
-            f,
-            indent=2,
-            ensure_ascii=False,
-        )
+    with open(SELECTED_FILE, "w", encoding="utf-8") as f:
+        json.dump(merged, f, indent=2, ensure_ascii=False)
 
 
 def save_stats():
-    STATS["timestamp"] = (
-        datetime.utcnow().isoformat()
-    )
-
+    STATS["timestamp"] = datetime.utcnow().isoformat()
     existing = {}
-
-    if Path(
-        STATS_FILE
-    ).exists():
+    if Path(STATS_FILE).exists():
         try:
-            with open(
-                STATS_FILE,
-                "r",
-                encoding="utf-8",
-            ) as f:
+            with open(STATS_FILE, "r", encoding="utf-8") as f:
                 existing = json.load(f)
-
         except Exception:
             pass
-
     existing.update(STATS)
-
-    with open(
-        STATS_FILE,
-        "w",
-        encoding="utf-8",
-    ) as f:
-        json.dump(
-            existing,
-            f,
-            indent=2,
-            ensure_ascii=False,
-        )
+    with open(STATS_FILE, "w", encoding="utf-8") as f:
+        json.dump(existing, f, indent=2, ensure_ascii=False)
 
 
 # -- UTILITIES -----------------------------------------------------------------
 
-def normalize_link(
-    link,
-    base=None,
-):
+def normalize_link(link, base=None):
     if not link:
         return ""
-
     link = link.strip()
-
     if link.startswith("//"):
         link = "https:" + link
-
-    if (
-        base
-        and not urlparse(link).netloc
-    ):
-        link = urljoin(
-            base,
-            link,
-        )
-
-    link = re.sub(
-        r"([?&])utm_[^=]+=[^&]+",
-        r"\1",
-        link,
-    )
-
-    link = re.sub(
-        r"([?&])fbclid=[^&]+",
-        r"\1",
-        link,
-    )
-
-    link = re.sub(
-        r"[?&]$",
-        "",
-        link,
-    )
-
+    if base and not urlparse(link).netloc:
+        link = urljoin(base, link)
+    link = re.sub(r"([?&])utm_[^=]+=[^&]+", r"\1", link)
+    link = re.sub(r"([?&])fbclid=[^&]+", r"\1", link)
+    link = re.sub(r"[?&]$", "", link)
     return link.split("#")[0]
 
 
 def parse_date(entry):
-    for key in (
-        "published_parsed",
-        "updated_parsed",
-        "created_parsed",
-        "issued_parsed",
-    ):
+    for key in ("published_parsed", "updated_parsed", "created_parsed", "issued_parsed"):
         st = entry.get(key)
-
         if st:
             try:
                 return (
-                    datetime.fromtimestamp(
-                        time.mktime(st),
-                        tz=timezone.utc,
-                    ),
+                    datetime.fromtimestamp(time.mktime(st), tz=timezone.utc),
                     False,
                 )
-
             except Exception:
                 pass
 
-    for key in (
-        "published",
-        "updated",
-        "created",
-        "dc_date",
-        "issued",
-    ):
+    for key in ("published", "updated", "created", "dc_date", "issued"):
         val = entry.get(key)
-
-        if (
-            isinstance(
-                val,
-                str,
-            )
-            and val.strip()
-        ):
+        if isinstance(val, str) and val.strip():
             try:
-                dt = parsedate_to_datetime(
-                    val
-                )
-
+                dt = parsedate_to_datetime(val)
                 if dt.tzinfo is None:
-                    dt = dt.replace(
-                        tzinfo=timezone.utc
-                    )
-
-                return (
-                    dt.astimezone(
-                        timezone.utc
-                    ),
-                    False,
-                )
-
+                    dt = dt.replace(tzinfo=timezone.utc)
+                return (dt.astimezone(timezone.utc), False)
             except Exception:
                 pass
 
             if dateutil_parser:
                 try:
-                    dt = dateutil_parser.parse(
-                        val
-                    )
-
+                    dt = dateutil_parser.parse(val)
                     if dt.tzinfo is None:
-                        dt = dt.replace(
-                            tzinfo=timezone.utc
-                        )
-
-                    return (
-                        dt.astimezone(
-                            timezone.utc
-                        ),
-                        False,
-                    )
-
+                        dt = dt.replace(tzinfo=timezone.utc)
+                    return (dt.astimezone(timezone.utc), False)
                 except Exception:
                     pass
 
     if ALLOW_MISSING_DATES:
-        return (
-            datetime.now(
-                timezone.utc
-            ),
-            True,
-        )
+        return (datetime.now(timezone.utc), True)
 
     return None, False
 
 
-IMG_SRC_RE = re.compile(
-    r'<img[^>]+src=["\']([^"\']+)["\']',
-    re.I,
-)
+IMG_SRC_RE = re.compile(r'<img[^>]+src=["\']([^"\']+)["\']', re.I)
 
 
-def find_image_in_html(
-    html_text,
-    base=None,
-):
+def find_image_in_html(html_text, base=None):
     if not html_text:
         return None
-
-    m = IMG_SRC_RE.search(
-        html_text
-    )
-
+    m = IMG_SRC_RE.search(html_text)
     if not m:
         return None
-
-    return normalize_link(
-        m.group(1).strip(),
-        base=base,
-    )
+    return normalize_link(m.group(1).strip(), base=base)
 
 
-def get_mime_for_url(
-    url,
-):
+def get_mime_for_url(url):
     if not url:
         return "image/jpeg"
-
-    path = urlparse(
-        url
-    ).path.lower()
-
+    path = urlparse(url).path.lower()
     if path.endswith(".png"):
         return "image/png"
-
     if path.endswith(".gif"):
         return "image/gif"
-
     if path.endswith(".webp"):
         return "image/webp"
-
     if path.endswith(".svg"):
         return "image/svg+xml"
-
     return "image/jpeg"
 
 
-def extract_image_url(
-    entry,
-    base_link=None,
-):
-    mt = entry.get(
-        "media_thumbnail"
-    )
-
+def extract_image_url(entry, base_link=None):
+    mt = entry.get("media_thumbnail")
     if mt:
-        if (
-            isinstance(mt, list)
-            and mt[0].get("url")
-        ):
-            return normalize_link(
-                mt[0]["url"],
-                base=base_link,
-            )
+        if isinstance(mt, list) and mt[0].get("url"):
+            return normalize_link(mt[0]["url"], base=base_link)
+        if isinstance(mt, dict) and mt.get("url"):
+            return normalize_link(mt["url"], base=base_link)
 
-        if (
-            isinstance(mt, dict)
-            and mt.get("url")
-        ):
-            return normalize_link(
-                mt["url"],
-                base=base_link,
-            )
-
-    mc = entry.get(
-        "media_content"
-    )
-
+    mc = entry.get("media_content")
     if mc:
-        if (
-            isinstance(mc, list)
-            and mc[0].get("url")
-        ):
-            return normalize_link(
-                mc[0]["url"],
-                base=base_link,
-            )
+        if isinstance(mc, list) and mc[0].get("url"):
+            return normalize_link(mc[0]["url"], base=base_link)
+        if isinstance(mc, dict) and mc.get("url"):
+            return normalize_link(mc["url"], base=base_link)
 
-        if (
-            isinstance(mc, dict)
-            and mc.get("url")
-        ):
-            return normalize_link(
-                mc["url"],
-                base=base_link,
-            )
-
-    enc = entry.get(
-        "enclosures"
-    )
-
-    if (
-        enc
-        and isinstance(
-            enc,
-            list,
-        )
-    ):
+    enc = entry.get("enclosures")
+    if enc and isinstance(enc, list):
         for e in enc:
-            href = (
-                e.get("href")
-                or e.get("url")
-                or e.get("link")
-            )
-
-            typ = e.get(
-                "type",
-                "",
-            )
-
+            href = e.get("href") or e.get("url") or e.get("link")
+            typ = e.get("type", "")
             if href and (
-                typ.startswith(
-                    "image/"
-                )
-                or re.search(
-                    r'\.(jpg|jpeg|png|gif|webp|svg)$',
-                    href,
-                    re.I,
-                )
+                typ.startswith("image/")
+                or re.search(r'\.(jpg|jpeg|png|gif|webp|svg)$', href, re.I)
             ):
-                return normalize_link(
-                    href,
-                    base=base_link,
-                )
+                return normalize_link(href, base=base_link)
 
-    links = entry.get(
-        "links"
-    )
-
-    if (
-        links
-        and isinstance(
-            links,
-            list,
-        )
-    ):
+    links = entry.get("links")
+    if links and isinstance(links, list):
         for lnk in links:
-            if (
-                lnk.get("rel")
-                == "enclosure"
-            ):
-                href = lnk.get(
-                    "href"
-                )
-
+            if lnk.get("rel") == "enclosure":
+                href = lnk.get("href")
                 if href:
-                    return normalize_link(
-                        href,
-                        base=base_link,
-                    )
+                    return normalize_link(href, base=base_link)
 
-    content = entry.get(
-        "content"
-    )
-
+    content = entry.get("content")
     if content:
-        if isinstance(
-            content,
-            list,
-        ):
+        if isinstance(content, list):
             for c in content:
-                if (
-                    isinstance(
-                        c,
-                        dict,
-                    )
-                    and c.get(
-                        "value"
-                    )
-                ):
-                    found = find_image_in_html(
-                        c.get("value"),
-                        base=base_link,
-                    )
-
+                if isinstance(c, dict) and c.get("value"):
+                    found = find_image_in_html(c.get("value"), base=base_link)
                     if found:
                         return found
-
-        elif isinstance(
-            content,
-            str,
-        ):
-            found = find_image_in_html(
-                content,
-                base=base_link,
-            )
-
+        elif isinstance(content, str):
+            found = find_image_in_html(content, base=base_link)
             if found:
                 return found
 
-    for key in (
-        "summary",
-        "description",
-        "summary_detail",
-        "description_detail",
-    ):
-        val = entry.get(
-            key
-        )
-
-        if isinstance(
-            val,
-            dict,
-        ):
-            val = val.get(
-                "value"
-            )
-
-        if (
-            isinstance(
-                val,
-                str,
-            )
-            and val
-        ):
-            found = find_image_in_html(
-                val,
-                base=base_link,
-            )
-
+    for key in ("summary", "description", "summary_detail", "description_detail"):
+        val = entry.get(key)
+        if isinstance(val, dict):
+            val = val.get("value")
+        if isinstance(val, str) and val:
+            found = find_image_in_html(val, base=base_link)
             if found:
                 return found
 
     return None
 
 
-def fetch_og_image(
-    url: str,
-    timeout: int = 4,
-) -> str | None:
-    """
-    Fetch og:image from an article page
-    as a thumbnail fallback.
-
-    Reads only the first 64 KB of the response.
-    """
-
-    if (
-        not url
-        or not url.startswith(
-            "http"
-        )
-    ):
+def fetch_og_image(url: str, timeout: int = 4) -> str | None:
+    if not url or not url.startswith("http"):
         return None
-
     try:
         resp = requests.get(
             url,
             timeout=timeout,
-            headers={
-                "User-Agent":
-                    "Mozilla/5.0 "
-                    "(compatible; FeedBot/1.0)"
-            },
+            headers={"User-Agent": "Mozilla/5.0 (compatible; FeedBot/1.0)"},
             stream=True,
         )
-
         if resp.status_code != 200:
             return None
-
         chunk = b""
-
-        for block in resp.iter_content(
-            chunk_size=8192
-        ):
+        for block in resp.iter_content(chunk_size=8192):
             chunk += block
-
             if len(chunk) >= 65536:
                 break
-
-        text = chunk.decode(
-            "utf-8",
-            errors="replace",
-        )
-
+        text = chunk.decode("utf-8", errors="replace")
         for pattern in (
             r'<meta[^>]+property=["\']og:image["\'][^>]+content=["\']([^"\']+)["\']',
             r'<meta[^>]+content=["\']([^"\']+)["\'][^>]+property=["\']og:image["\']',
         ):
-            m = re.search(
-                pattern,
-                text,
-                re.I,
-            )
-
+            m = re.search(pattern, text, re.I)
             if m:
-                img = m.group(
-                    1
-                ).strip()
-
-                if img.startswith(
-                    "http"
-                ):
+                img = m.group(1).strip()
+                if img.startswith("http"):
                     return img
-
     except Exception:
         pass
-
     return None
 
 
 # -- FETCHING ------------------------------------------------------------------
 
-def fetch_via_kl(
-    kl_endpoint,
-    target_feed_url,
-    timeout=20,
-):
+def fetch_via_kl(kl_endpoint, target_feed_url, timeout=20):
     if not kl_endpoint:
         return None
-
     headers = {
-        "Content-Type":
-            "application/json",
-        "Accept":
-            "application/xml, text/xml, */*",
+        "Content-Type": "application/json",
+        "Accept": "application/xml, text/xml, */*",
     }
-
-    payload = {
-        "url": target_feed_url
-    }
-
+    payload = {"url": target_feed_url}
     try:
-        resp = requests.post(
-            kl_endpoint,
-            json=payload,
-            headers=headers,
-            timeout=timeout,
-        )
-
-        if (
-            resp.status_code == 200
-            and resp.text
-        ):
-            return feedparser.parse(
-                resp.text
-            )
-
+        resp = requests.post(kl_endpoint, json=payload, headers=headers, timeout=timeout)
+        if resp.status_code == 200 and resp.text:
+            return feedparser.parse(resp.text)
     except Exception:
         pass
-
     try:
         resp = requests.get(
-            kl_endpoint,
-            params={
-                "url": target_feed_url
-            },
-            headers=headers,
-            timeout=timeout,
+            kl_endpoint, params={"url": target_feed_url}, headers=headers, timeout=timeout
         )
-
-        if (
-            resp.status_code == 200
-            and resp.text
-        ):
-            return feedparser.parse(
-                resp.text
-            )
-
+        if resp.status_code == 200 and resp.text:
+            return feedparser.parse(resp.text)
     except Exception:
         pass
-
     return None
 
 
@@ -999,93 +525,33 @@ def fetch_feed(url):
     method_used = "DIRECT"
 
     if url_norm in KL_API_FEEDS:
-        kl_endpoint = os.environ.get(
-            "KL"
-        )
-
+        kl_endpoint = os.environ.get("KL")
         feed = None
-
         if kl_endpoint:
-            feed = fetch_via_kl(
-                kl_endpoint,
-                url_norm,
-            )
-
+            feed = fetch_via_kl(kl_endpoint, url_norm)
             if feed:
                 method_used = "KL"
-
         if not feed:
-            feed = feedparser.parse(
-                url_norm
-            )
-
+            feed = feedparser.parse(url_norm)
     else:
-        feed = feedparser.parse(
-            url_norm
-        )
+        feed = feedparser.parse(url_norm)
 
-    entries_count = len(
-        getattr(
-            feed,
-            "entries",
-            [],
-        )
-    )
+    entries_count = len(getattr(feed, "entries", []))
 
-    STATS[
-        "per_feed"
-    ].setdefault(
-        url_norm,
-        {
-            "fetched": 0,
-            "passed_age": 0,
-            "capped": 0,
-        },
-    )
-
-    STATS[
-        "per_feed"
-    ][url_norm][
-        "fetched"
-    ] += entries_count
-
-    STATS[
-        "per_method"
-    ].setdefault(
-        method_used,
-        0,
-    )
-
-    STATS[
-        "per_method"
-    ][method_used] += entries_count
-
-    STATS[
-        "total_fetched"
-    ] += entries_count
+    STATS["per_feed"].setdefault(url_norm, {"fetched": 0, "passed_age": 0, "capped": 0})
+    STATS["per_feed"][url_norm]["fetched"] += entries_count
+    STATS["per_method"].setdefault(method_used, 0)
+    STATS["per_method"][method_used] += entries_count
+    STATS["total_fetched"] += entries_count
 
     return feed
 
 
 def fetch_all_feeds():
-    now = datetime.now(
-        timezone.utc
-    )
-
-    cutoff = (
-        now
-        - timedelta(
-            hours=MAX_AGE_HOURS
-        )
-    )
-
-    bd_now = datetime.now(
-        BD_TZ
-    )
-
-    bd_now_str = bd_now.strftime(
-        "%a, %d %b %Y %H:%M:%S +0600"
-    )
+    now = datetime.now(timezone.utc)
+    cutoff = now - timedelta(hours=MAX_AGE_HOURS)
+    bd_now = datetime.now(BD_TZ)
+    bd_now_str = bd_now.strftime("%a, %d %b %Y %H:%M:%S +0600")
 
     raw_items = []
 
@@ -1095,920 +561,312 @@ def fetch_all_feeds():
 
         for e in feed.entries:
             dt, inferred = parse_date(e)
-
             if not dt:
                 continue
-
-            if (
-                not ALLOW_OLDER
-                and dt < cutoff
-            ):
+            if not ALLOW_OLDER and dt < cutoff:
                 continue
 
             desc = ""
-
             if e.get("summary"):
-                desc = e.get(
-                    "summary"
-                )
-
+                desc = e.get("summary")
             elif e.get("description"):
-                desc = e.get(
-                    "description"
-                )
-
-            elif (
-                e.get("content")
-                and isinstance(
-                    e.get(
-                        "content"
-                    ),
-                    list,
-                )
-            ):
+                desc = e.get("description")
+            elif e.get("content") and isinstance(e.get("content"), list):
                 desc = "\n".join(
-                    [
-                        c.get(
-                            "value",
-                            "",
-                        )
-                        for c
-                        in e.get(
-                            "content"
-                        )
-                        if isinstance(
-                            c,
-                            dict,
-                        )
-                    ]
+                    [c.get("value", "") for c in e.get("content") if isinstance(c, dict)]
                 )
-
             else:
-                det = (
-                    e.get(
-                        "summary_detail"
-                    )
-                    or e.get(
-                        "description_detail"
-                    )
-                )
+                det = e.get("summary_detail") or e.get("description_detail")
+                if isinstance(det, dict):
+                    desc = det.get("value", "") or ""
 
-                if isinstance(
-                    det,
-                    dict,
-                ):
-                    desc = det.get(
-                        "value",
-                        "",
-                    ) or ""
-
-            raw_link = normalize_link(
-                e.get(
-                    "link"
-                )
-                or ""
-            )
-
-            if is_google_news_url(
-                raw_link
-            ):
-                real_link = (
-                    decode_google_news_url(
-                        raw_link
-                    )
-                )
+            raw_link = normalize_link(e.get("link") or "")
+            if is_google_news_url(raw_link):
+                real_link = decode_google_news_url(raw_link)
             else:
                 real_link = raw_link
 
-            article_id = (
-                e.get("id")
-                or real_link
-                or raw_link
-                or ""
-            )
-
-            image_url = (
-                extract_image_url(
-                    e,
-                    base_link=real_link,
-                )
-            )
+            article_id = e.get("id") or real_link or raw_link or ""
+            image_url = extract_image_url(e, base_link=real_link)
 
             article = {
-                "id": str(
-                    article_id
-                ),
-                "title": (
-                    e.get(
-                        "title",
-                        "",
-                    )
-                    or ""
-                ),
+                "id": str(article_id),
+                "title": (e.get("title", "") or ""),
                 "link": real_link,
-                "description": (
-                    desc or ""
-                ),
-                "published": (
-                    bd_now_str
-                ),
+                "description": (desc or ""),
+                "published": bd_now_str,
                 "source": url,
                 "_dt": dt,
             }
 
             if inferred:
-                article[
-                    "published_inferred"
-                ] = True
-
+                article["published_inferred"] = True
             if image_url:
-                article[
-                    "thumbnail"
-                ] = image_url
+                article["thumbnail"] = image_url
+                article["thumbnail_type"] = get_mime_for_url(image_url)
 
-                article[
-                    "thumbnail_type"
-                ] = get_mime_for_url(
-                    image_url
-                )
+            feed_items.append(article)
 
-            feed_items.append(
-                article
-            )
+        passed = len(feed_items)
+        STATS["per_feed"][url]["passed_age"] = passed
+        STATS["total_passed_age"] += passed
+        raw_items.extend(feed_items)
 
-        passed = len(
-            feed_items
-        )
+    raw_items.sort(key=lambda a: a["_dt"], reverse=True)
 
-        STATS[
-            "per_feed"
-        ][url][
-            "passed_age"
-        ] = passed
-
-        STATS[
-            "total_passed_age"
-        ] += passed
-
-        raw_items.extend(
-            feed_items
-        )
-
-    raw_items.sort(
-        key=lambda a: a["_dt"],
-        reverse=True,
-    )
-
-    pre_gemini_cap = (
-        MAX_ARTICLES_PER_FEED
-        * len(FEED_URLS)
-    )
-
-    all_articles = raw_items[
-        :pre_gemini_cap
-    ]
+    pre_gemini_cap = MAX_ARTICLES_PER_FEED * len(FEED_URLS)
+    all_articles = raw_items[:pre_gemini_cap]
 
     included_sources: dict[str, int] = {}
-
     for a in all_articles:
-        included_sources[
-            a["source"]
-        ] = (
-            included_sources.get(
-                a["source"],
-                0,
-            )
-            + 1
-        )
+        included_sources[a["source"]] = included_sources.get(a["source"], 0) + 1
 
     for url in FEED_URLS:
-        STATS[
-            "per_feed"
-        ][url][
-            "capped"
-        ] = included_sources.get(
-            url,
-            0,
-        )
+        STATS["per_feed"][url]["capped"] = included_sources.get(url, 0)
 
     return all_articles
 
 
-def get_new_articles(
-    all_articles,
-    seen_links,
-):
-    new = []
-
-    for a in all_articles:
-        link = a.get(
-            "link"
-        )
-
-        if (
-            link
-            and link not in seen_links
-        ):
-            new.append(
-                a
-            )
-
-    return new
+def get_new_articles(all_articles, seen_links):
+    return [a for a in all_articles if a.get("link") and a["link"] not in seen_links]
 
 
-def dedup_by_link(
-    articles,
-):
+def dedup_by_link(articles):
     seen = set()
     deduped = []
-
     for a in articles:
-        link = a.get(
-            "link",
-            "",
-        )
-
-        if (
-            link
-            and link not in seen
-        ):
-            seen.add(
-                link
-            )
-
-            deduped.append(
-                a
-            )
-
+        link = a.get("link", "")
+        if link and link not in seen:
+            seen.add(link)
+            deduped.append(a)
         elif not link:
-            deduped.append(
-                a
-            )
-
-    dropped = (
-        len(articles)
-        - len(deduped)
-    )
-
+            deduped.append(a)
+    dropped = len(articles) - len(deduped)
     if dropped:
-        print(
-            "Link dedup: removed "
-            f"{dropped} duplicate link(s)."
-        )
-
+        print(f"Link dedup: removed {dropped} duplicate link(s).")
     return deduped
 
 
 # -- CLASSIFICATION ------------------------------------------------------------
 
-def extract_signal_indices(
-    text,
-):
-    text = (
-        text
-        .replace(
-            "```json",
-            "",
-        )
-        .replace(
-            "```",
-            "",
-        )
-        .strip()
-    )
+def extract_signal_indices(text):
+    text = text.replace("```json", "").replace("```", "").strip()
 
-    match = re.search(
-        r"\{.*\}",
-        text,
-        flags=re.DOTALL,
-    )
-
+    match = re.search(r"\{.*\}", text, flags=re.DOTALL)
     if match:
         try:
-            obj = json.loads(
-                match.group(0)
-            )
-
-            if isinstance(
-                obj,
-                dict,
-            ):
-                return [
-                    i
-                    for i
-                    in obj.get(
-                        "signal",
-                        [],
-                    )
-                    if isinstance(
-                        i,
-                        int,
-                    )
-                ]
-
+            obj = json.loads(match.group(0))
+            if isinstance(obj, dict):
+                return [i for i in obj.get("signal", []) if isinstance(i, int)]
         except Exception:
             pass
 
-    m = re.search(
-        r'"signal"\s*:\s*(\[.*?\])',
-        text,
-        flags=re.DOTALL,
-    )
-
+    m = re.search(r'"signal"\s*:\s*(\[.*?\])', text, flags=re.DOTALL)
     if m:
         try:
-            return [
-                i
-                for i
-                in json.loads(
-                    m.group(1)
-                )
-                if isinstance(
-                    i,
-                    int,
-                )
-            ]
-
+            return [i for i in json.loads(m.group(1)) if isinstance(i, int)]
         except Exception:
             pass
 
     return []
 
 
-def send_to_mistral(articles):
+def send_to_gemini(articles):
     api_key = os.environ.get("GEMINI_API_KEY")
     if not api_key or not articles:
-        return {"signal": [], "longread": []}
+        return []
 
     client = genai.Client(api_key=api_key)
     titles_text = "\n".join(
         f"{i}. {a.get('title', '')}" for i, a in enumerate(articles)
     )
 
+    # Use str.replace to avoid KeyError from curly braces in PROMPT body
+    # and also in article titles (e.g. "{GDP}", "{3.5%}").
+    prompt = PROMPT.replace("{titles}", titles_text)
+
     for attempt in range(2):
         try:
             chat = client.chats.create(model=MISTRAL_MODEL)
             response = chat.send_message(
-                PROMPT.format(titles=titles_text),
+                prompt,
                 config={"response_mime_type": "application/json"},
             )
             text = response.text if hasattr(response, "text") else ""
-            return extract_json_object(text)
+            return extract_signal_indices(text)
         except Exception as e:
             print(f"Gemini classification error: {e}")
-            sys.exit(1)
+            if attempt == 1:
+                sys.exit(1)
 
-    return {"signal": [], "longread": []}
+    return []
 
 
 # -- XML -----------------------------------------------------------------------
 
-def _fresh_channel(
-    root,
-    feed_title,
-    feed_description,
-):
-    channel = ET.SubElement(
-        root,
-        "channel",
-    )
-
-    ET.SubElement(
-        channel,
-        "title",
-    ).text = feed_title
-
-    ET.SubElement(
-        channel,
-        "link",
-    ).text = (
-        "https://evilgodfahim.github.io/"
-    )
-
-    ET.SubElement(
-        channel,
-        "description",
-    ).text = feed_description
-
+def _fresh_channel(root, feed_title, feed_description):
+    channel = ET.SubElement(root, "channel")
+    ET.SubElement(channel, "title").text = feed_title
+    ET.SubElement(channel, "link").text = "https://evilgodfahim.github.io/"
+    ET.SubElement(channel, "description").text = feed_description
     return channel
 
 
-def _load_or_create(
-    output_file,
-    feed_title,
-    feed_description,
-):
-    ET.register_namespace(
-        "media",
-        MEDIA_NS,
-    )
+def _load_or_create(output_file, feed_title, feed_description):
+    ET.register_namespace("media", MEDIA_NS)
 
-    if Path(
-        output_file
-    ).exists():
+    if Path(output_file).exists():
         try:
-            tree = ET.parse(
-                output_file
-            )
-
+            tree = ET.parse(output_file)
             root = tree.getroot()
-
-            channel = root.find(
-                "channel"
-            )
-
+            channel = root.find("channel")
             if channel is not None:
-                return (
-                    tree,
-                    root,
-                    channel,
-                )
-
-            channel = _fresh_channel(
-                root,
-                feed_title,
-                feed_description,
-            )
-
-            return (
-                tree,
-                root,
-                channel,
-            )
-
+                return tree, root, channel
+            channel = _fresh_channel(root, feed_title, feed_description)
+            return tree, root, channel
         except ET.ParseError as e:
-            print(
-                "[WARN] XML parse failed "
-                "on first attempt "
-                f"({output_file}): {e}"
-            )
-
-            print(
-                "[INFO] Retrying with "
-                "sanitized content…"
-            )
+            print(f"[WARN] XML parse failed on first attempt ({output_file}): {e}")
+            print("[INFO] Retrying with sanitized content…")
 
         try:
-            with open(
-                output_file,
-                "r",
-                encoding="utf-8",
-                errors="replace",
-            ) as fh:
+            with open(output_file, "r", encoding="utf-8", errors="replace") as fh:
                 raw = fh.read()
-
-            clean = (
-                _sanitize_xml_bytes(
-                    raw
-                )
-            )
-
-            root = ET.fromstring(
-                clean
-            )
-
-            tree = ET.ElementTree(
-                root
-            )
-
-            channel = root.find(
-                "channel"
-            )
-
+            clean = _sanitize_xml_bytes(raw)
+            root = ET.fromstring(clean)
+            tree = ET.ElementTree(root)
+            channel = root.find("channel")
             if channel is not None:
-                recovered = len(
-                    channel.findall(
-                        "item"
-                    )
-                )
-
-                print(
-                    "[INFO] Sanitization "
-                    "succeeded — recovered "
-                    f"{recovered} existing item(s)."
-                )
-
-                return (
-                    tree,
-                    root,
-                    channel,
-                )
-
-            channel = _fresh_channel(
-                root,
-                feed_title,
-                feed_description,
-            )
-
-            return (
-                tree,
-                root,
-                channel,
-            )
-
+                recovered = len(channel.findall("item"))
+                print(f"[INFO] Sanitization succeeded — recovered {recovered} existing item(s).")
+                return tree, root, channel
+            channel = _fresh_channel(root, feed_title, feed_description)
+            return tree, root, channel
         except ET.ParseError as e:
-            print(
-                "[WARN] XML still "
-                "unparseable after "
-                "sanitization "
-                f"({output_file}): {e}"
-            )
+            print(f"[WARN] XML still unparseable after sanitization ({output_file}): {e}")
+            print("[WARN] Starting a fresh feed — existing items cannot be recovered.")
 
-            print(
-                "[WARN] Starting a fresh "
-                "feed — existing items "
-                "in this file cannot be recovered."
-            )
-
-    root = ET.Element(
-        "rss",
-        {"version": "2.0"},
-    )
-
-    tree = ET.ElementTree(
-        root
-    )
-
-    channel = _fresh_channel(
-        root,
-        feed_title,
-        feed_description,
-    )
-
-    return (
-        tree,
-        root,
-        channel,
-    )
+    root = ET.Element("rss", {"version": "2.0"})
+    tree = ET.ElementTree(root)
+    channel = _fresh_channel(root, feed_title, feed_description)
+    return tree, root, channel
 
 
-def generate_xml_feed(
-    articles,
-    output_file,
-    feed_title=None,
-    feed_description=None,
-):
-    feed_title = (
-        feed_title
-        or "BD Economics & Finance"
-    )
-
+def generate_xml_feed(articles, output_file, feed_title=None, feed_description=None):
+    feed_title = feed_title or "BD Economics & Finance"
     feed_description = (
-        feed_description
-        or "AI-curated Bangladesh economics and finance news"
+        feed_description or "AI-curated Bangladesh economics and finance news"
     )
 
-    (
-        tree,
-        root,
-        channel,
-    ) = _load_or_create(
-        output_file,
-        feed_title,
-        feed_description,
-    )
+    tree, root, channel = _load_or_create(output_file, feed_title, feed_description)
 
     existing_links: set[str] = set()
+    for item in channel.findall("item"):
+        link_el = item.find("link")
+        if link_el is not None and link_el.text:
+            existing_links.add(link_el.text.strip())
 
-    for item in channel.findall(
-        "item"
-    ):
-        link_el = item.find(
-            "link"
-        )
-
-        if (
-            link_el is not None
-            and link_el.text
-        ):
-            existing_links.add(
-                link_el.text.strip()
-            )
-
-    # Batch-fetch og:image in parallel
-    # for articles that have no thumbnail.
+    # Batch-fetch og:image for articles missing thumbnails
     _needs_thumb = [
         a
         for a in articles
-        if not a.get(
-            "thumbnail"
-        )
-        and (
-            a.get("link")
-            or ""
-        ).startswith(
-            "http"
-        )
-        and a.get("link")
-        not in existing_links
+        if not a.get("thumbnail")
+        and (a.get("link") or "").startswith("http")
+        and a.get("link") not in existing_links
     ]
 
     if _needs_thumb:
-        print(
-            "  Fetching og:image for "
-            f"{len(_needs_thumb)} article(s) "
-            "missing thumbnails…"
-        )
-
-        with concurrent.futures.ThreadPoolExecutor(
-            max_workers=10
-        ) as _pool:
-            _og_imgs = list(
-                _pool.map(
-                    lambda a: fetch_og_image(
-                        a["link"]
-                    ),
-                    _needs_thumb,
-                )
-            )
-
+        print(f"  Fetching og:image for {len(_needs_thumb)} article(s) missing thumbnails…")
+        with concurrent.futures.ThreadPoolExecutor(max_workers=10) as _pool:
+            _og_imgs = list(_pool.map(lambda a: fetch_og_image(a["link"]), _needs_thumb))
         _found = 0
-
-        for _art, _img in zip(
-            _needs_thumb,
-            _og_imgs,
-        ):
+        for _art, _img in zip(_needs_thumb, _og_imgs):
             if _img:
-                _art[
-                    "thumbnail"
-                ] = _img
-
-                _art[
-                    "thumbnail_type"
-                ] = get_mime_for_url(
-                    _img
-                )
-
+                _art["thumbnail"] = _img
+                _art["thumbnail_type"] = get_mime_for_url(_img)
                 _found += 1
-
-        print(
-            "  og:image resolved: "
-            f"{_found}/{len(_needs_thumb)}"
-        )
+        print(f"  og:image resolved: {_found}/{len(_needs_thumb)}")
 
     added = 0
 
     for a in articles:
-        link = (
-            a.get("link")
-            or ""
-        ).strip()
-
-        if (
-            not link
-            or link in existing_links
-        ):
+        link = (a.get("link") or "").strip()
+        if not link or link in existing_links:
             continue
 
-        item = ET.SubElement(
-            channel,
-            "item",
-        )
+        item = ET.SubElement(channel, "item")
+        ET.SubElement(item, "title").text = (a.get("title", "") or "")
+        ET.SubElement(item, "description").text = (a.get("description", "") or "")
+        ET.SubElement(item, "link").text = _safe_text(link)
 
-        ET.SubElement(
-            item,
-            "title",
-        ).text = (
-            a.get(
-                "title",
-                "",
-            )
-            or ""
-        )
+        guid_val = a.get("id") or link
+        is_permalink = "true" if guid_val.startswith("http") else "false"
+        ET.SubElement(item, "guid", {"isPermaLink": is_permalink}).text = _safe_text(guid_val)
 
-        ET.SubElement(
-            item,
-            "description",
-        ).text = (
-            a.get(
-                "description",
-                "",
-            )
-            or ""
-        )
+        if a.get("published"):
+            ET.SubElement(item, "pubDate").text = a["published"]
 
-        ET.SubElement(
-            item,
-            "link",
-        ).text = _safe_text(
-            link
-        )
-
-        guid_val = (
-            a.get("id")
-            or link
-        )
-
-        is_permalink = (
-            "true"
-            if guid_val.startswith(
-                "http"
-            )
-            else "false"
-        )
-
-        ET.SubElement(
-            item,
-            "guid",
-            {
-                "isPermaLink":
-                    is_permalink
-            },
-        ).text = _safe_text(
-            guid_val
-        )
-
-        if a.get(
-            "published"
-        ):
-            ET.SubElement(
-                item,
-                "pubDate",
-            ).text = a[
-                "published"
-            ]
-
-        thumb = a.get(
-            "thumbnail"
-        )
-
+        thumb = a.get("thumbnail")
         if thumb:
-            ET.SubElement(
-                item,
-                MEDIA_TAG
-                + "thumbnail",
-                {
-                    "url": thumb
-                },
-            )
+            ET.SubElement(item, MEDIA_TAG + "thumbnail", {"url": thumb})
+            mime = a.get("thumbnail_type") or get_mime_for_url(thumb)
+            ET.SubElement(item, "enclosure", {"url": thumb, "type": mime, "length": "0"})
 
-            mime = (
-                a.get(
-                    "thumbnail_type"
-                )
-                or get_mime_for_url(
-                    thumb
-                )
-            )
-
-            ET.SubElement(
-                item,
-                "enclosure",
-                {
-                    "url": thumb,
-                    "type": mime,
-                    "length": "0",
-                },
-            )
-
-        existing_links.add(
-            link
-        )
-
+        existing_links.add(link)
         added += 1
 
-    all_items = channel.findall(
-        "item"
-    )
-
-    overflow = (
-        len(all_items)
-        - MAX_FEED_ITEMS
-    )
-
+    all_items = channel.findall("item")
+    overflow = len(all_items) - MAX_FEED_ITEMS
     if overflow > 0:
-        for old_item in all_items[
-            :overflow
-        ]:
-            channel.remove(
-                old_item
-            )
+        for old_item in all_items[:overflow]:
+            channel.remove(old_item)
 
-    now_text = (
-        datetime.utcnow().strftime(
-            "%a, %d %b %Y %H:%M:%S +0000"
-        )
-    )
-
-    last_build = channel.find(
-        "lastBuildDate"
-    )
-
+    now_text = datetime.utcnow().strftime("%a, %d %b %Y %H:%M:%S +0000")
+    last_build = channel.find("lastBuildDate")
     if last_build is None:
-        ET.SubElement(
-            channel,
-            "lastBuildDate",
-        ).text = now_text
-
+        ET.SubElement(channel, "lastBuildDate").text = now_text
     else:
         last_build.text = now_text
 
     try:
-        ET.indent(
-            tree,
-            space="  ",
-        )
-
+        ET.indent(tree, space="  ")
     except AttributeError:
         pass
 
-    tree.write(
-        output_file,
-        encoding="unicode",
-        xml_declaration=False,
-    )
+    tree.write(output_file, encoding="unicode", xml_declaration=False)
 
-    with open(
-        output_file,
-        "r+",
-        encoding="utf-8",
-    ) as fh:
+    with open(output_file, "r+", encoding="utf-8") as fh:
         body = fh.read()
-
         fh.seek(0)
-
-        fh.write(
-            '<?xml version="1.0" encoding="UTF-8"?>\n'
-            + body
-        )
-
+        fh.write('<?xml version="1.0" encoding="UTF-8"?>\n' + body)
         fh.truncate()
 
     print(
-        f"  → {added} new item(s) written "
-        f"to {output_file} "
-        f"(total in feed: "
-        f"{len(channel.findall('item'))})"
+        f"  → {added} new item(s) written to {output_file} "
+        f"(total in feed: {len(channel.findall('item'))})"
     )
-
     return added
 
 
 # -- STATS ---------------------------------------------------------------------
 
 def print_stats():
-    print(
-        "\nFetch statistics:"
-    )
-
-    print(
-        "  Timestamp:       "
-        f"{STATS.get('timestamp')}"
-    )
-
-    print(
-        "  Total fetched:   "
-        f"{STATS['total_fetched']}"
-    )
-
-    print(
-        "  Passed age cut:  "
-        f"{STATS['total_passed_age']}  "
-        f"(within {MAX_AGE_HOURS}h)"
-    )
-
-    print(
-        "  New (unseen):    "
-        f"{STATS['total_new']}"
-    )
-
-    print(
-        "  Signal (Gemini): "
-        f"{STATS['total_signal_gemini']}  "
-        f"-> {OUTPUT_XML}"
-    )
-
-    print(
-        "  Per-method:"
-    )
-
-    for method, cnt in STATS[
-        "per_method"
-    ].items():
+    print("\nFetch statistics:")
+    print(f"  Timestamp:       {STATS.get('timestamp')}")
+    print(f"  Total fetched:   {STATS['total_fetched']}")
+    print(f"  Passed age cut:  {STATS['total_passed_age']}  (within {MAX_AGE_HOURS}h)")
+    print(f"  New (unseen):    {STATS['total_new']}")
+    print(f"  Signal (Gemini): {STATS['total_signal_gemini']}  -> {OUTPUT_XML}")
+    print("  Per-method:")
+    for method, cnt in STATS["per_method"].items():
+        print(f"    {method}: {cnt}")
+    print("  Per-feed:")
+    for feed, d in STATS["per_feed"].items():
+        print(f"    {feed}")
         print(
-            f"    {method}: {cnt}"
+            f"      fetched={d.get('fetched', 0)}  "
+            f"passed_age={d.get('passed_age', 0)}  "
+            f"capped={d.get('capped', 0)}"
         )
-
-    print(
-        "  Per-feed:"
-    )
-
-    for feed, d in STATS[
-        "per_feed"
-    ].items():
-        print(
-            f"    {feed}"
-        )
-
-        print(
-            "      fetched="
-            f"{d.get('fetched', 0)}  "
-            "passed_age="
-            f"{d.get('passed_age', 0)}  "
-            "capped="
-            f"{d.get('capped', 0)}"
-        )
-
     print("")
 
 
@@ -2019,147 +877,59 @@ def main():
 
     all_articles = fetch_all_feeds()
 
-    new_articles = get_new_articles(
-        all_articles,
-        seen_links,
-    )
-
-    new_articles = dedup_by_link(
-        new_articles
-    )
+    new_articles = get_new_articles(all_articles, seen_links)
+    new_articles = dedup_by_link(new_articles)
 
     for a in new_articles:
-        a.pop(
-            "_dt",
-            None,
-        )
+        a.pop("_dt", None)
 
-    STATS[
-        "total_new"
-    ] = len(
-        new_articles
-    )
+    STATS["total_new"] = len(new_articles)
 
-    print(
-        "Sending "
-        f"{len(new_articles)} "
-        "article(s) to Gemini for "
-        "BD economics/finance filtering…"
-    )
+    print(f"Sending {len(new_articles)} article(s) to Gemini for classification…")
 
-    gemini_indices = (
-        send_to_mistral(
-            new_articles
-        )
-    )
+    gemini_indices = send_to_gemini(new_articles)
+    gemini_indices = [i for i in gemini_indices if 0 <= i < len(new_articles)]
 
-    gemini_indices = [
-        i
-        for i in gemini_indices
-        if 0 <= i < len(
-            new_articles
-        )
-    ]
-
-    STATS[
-        "total_signal_gemini"
-    ] = len(
-        gemini_indices
-    )
-
-    STATS[
-        "total_signal"
-    ] = len(
-        gemini_indices
-    )
+    STATS["total_signal_gemini"] = len(gemini_indices)
+    STATS["total_signal"] = len(gemini_indices)
 
     for a in new_articles:
-        link = a.get(
-            "link"
-        )
-
+        link = a.get("link")
         if link:
-            seen_links.add(
-                link
-            )
+            seen_links.add(link)
 
-    save_seen_links(
-        seen_links
-    )
+    save_seen_links(seen_links)
 
     if not gemini_indices:
-        print(
-            "Gemini returned no "
-            "signal indices. "
-            "Skipping XML writes."
-        )
-
-        _set_gha_output(
-            "has_signal",
-            "false",
-        )
-
+        print("Gemini returned no signal indices. Skipping XML writes.")
+        _set_gha_output("has_signal", "false")
         print_stats()
-
         return
 
-    signal_articles = [
-        new_articles[i]
-        for i
-        in gemini_indices
-    ]
-
-    signal_index_set = set(
-        gemini_indices
-    )
-
+    signal_articles = [new_articles[i] for i in gemini_indices]
+    signal_index_set = set(gemini_indices)
     excluded_articles = [
-        new_articles[i]
-        for i
-        in range(
-            len(new_articles)
-        )
-        if i
-        not in signal_index_set
+        new_articles[i] for i in range(len(new_articles)) if i not in signal_index_set
     ]
 
     generate_xml_feed(
         signal_articles,
         output_file=OUTPUT_XML,
-        feed_title="BD Economics & Finance",
-        feed_description=(
-            "AI-curated Bangladesh national "
-            "economics and finance news"
-        ),
+        feed_title="Global Intelligence Feed",
+        feed_description="AI-curated global intelligence across 13 domains",
     )
 
     generate_xml_feed(
         excluded_articles,
         output_file=EXCLUDED_XML,
-        feed_title=(
-            "Excluded (BD Economics Filter)"
-        ),
-        feed_description=(
-            "Articles excluded by BD economics "
-            "and finance filter"
-        ),
+        feed_title="Excluded (Global Intelligence Filter)",
+        feed_description="Articles excluded by global intelligence filter",
     )
 
-    save_selected_articles(
-        signal_articles
-    )
-
-    _set_gha_output(
-        "has_signal",
-        "true",
-    )
-
-    STATS[
-        "timestamp"
-    ] = datetime.utcnow().isoformat()
-
+    save_selected_articles(signal_articles)
+    _set_gha_output("has_signal", "true")
+    STATS["timestamp"] = datetime.utcnow().isoformat()
     save_stats()
-
     print_stats()
 
 
