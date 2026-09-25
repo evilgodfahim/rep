@@ -46,7 +46,7 @@ jobs:
         run: |
           set -euo pipefail
 
-          max_attempts=4
+          max_attempts=5
           base_delay=60
           delay_step=30
 
