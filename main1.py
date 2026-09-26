@@ -123,7 +123,7 @@ MAX_FEED_ITEMS = 500
 
 # -- PROMPT --------------------------------------------------------------------
 
-PROMPT = """ROLE: News classifier for a global intelligence feed covering 13 domains. Input is a numbered list of article titles. Output must be valid JSON only — no markdown, no explanation.
+PROMPT = """ROLE: News classifier for a global intelligence feed covering 13 domains. Input is a numbered list of article titles. Output must be valid JSON only — no markdown, no explanation. The bar of selection is Super High [Extreme Low < Super Low < Low < Normal < High < Super High < Ultimate High].
 
 TASK: Return the 0-based indices of every SIGNAL article.
 
